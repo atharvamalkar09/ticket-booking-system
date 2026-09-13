@@ -1,0 +1,266 @@
+<app-navbar></app-navbar>
+
+<div class="container events-page">
+
+  <div class="events-page__header">
+    <div>
+      <h2>Events</h2>
+
+      <p class="text-secondary">
+        Discover upcoming events and book your seats.
+      </p>
+    </div>
+  </div>
+
+  @if (!isLoading && !errorMessage && events.length > 0) {
+    <div class="event-filters">
+
+      <div class="event-search">
+        <span class="event-search__icon">⌕</span>
+
+        <input
+          class="input event-search__input"
+          type="text"
+          placeholder="Search events..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+        />
+
+        @if (searchTerm) {
+          <button
+            type="button"
+            class="event-search__clear"
+            (click)="searchTerm = ''; applyFilters()"
+            aria-label="Clear search"
+          >
+            ×
+          </button>
+        }
+      </div>
+
+      <div class="event-filter">
+        <label for="category">Category</label>
+
+        <select
+          class="select"
+          id="category"
+          [(ngModel)]="selectedCategory"
+          (ngModelChange)="applyFilters()"
+        >
+          <option value="">All categories</option>
+
+          @for (category of categories; track category) {
+            <option [value]="category">
+              {{ category }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="event-filter">
+        <label for="eventDate">Date</label>
+
+        <input
+          class="input"
+          id="eventDate"
+          type="date"
+          [(ngModel)]="selectedDate"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <div class="event-filter event-filter--price">
+        <label for="minPrice">Min price</label>
+
+        <input
+          class="input"
+          id="minPrice"
+          type="number"
+          min="0"
+          placeholder="₹0"
+          [(ngModel)]="minPrice"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <div class="event-filter event-filter--price">
+        <label for="maxPrice">Max price</label>
+
+        <input
+          class="input"
+          id="maxPrice"
+          type="number"
+          min="0"
+          placeholder="₹10000"
+          [(ngModel)]="maxPrice"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <div class="event-filter">
+        <label for="sort">Sort by</label>
+
+        <select
+          class="select"
+          id="sort"
+          [(ngModel)]="sortBy"
+          (ngModelChange)="applyFilters()"
+        >
+          <option value="date">Date</option>
+          <option value="price-low">Price: Low to high</option>
+          <option value="price-high">Price: High to low</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="event-results-bar">
+
+      <span class="event-results-count">
+        {{ filteredEvents.length }}
+        {{ filteredEvents.length === 1 ? 'event' : 'events' }}
+      </span>
+
+      @if (
+        searchTerm ||
+        selectedCategory ||
+        selectedDate ||
+        minPrice !== null ||
+        maxPrice !== null
+      ) {
+        <button
+          type="button"
+          class="btn btn--secondary btn--sm"
+          (click)="clearFilters()"
+        >
+          Clear filters
+        </button>
+      }
+
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="event-grid">
+
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="card event-card-basic">
+
+          <div
+            class="skeleton"
+            style="height: 20px; width: 70%; margin-bottom: 12px;"
+          ></div>
+
+          <div
+            class="skeleton"
+            style="height: 14px; width: 100%; margin-bottom: 8px;"
+          ></div>
+
+          <div
+            class="skeleton"
+            style="height: 14px; width: 90%;"
+          ></div>
+
+        </div>
+      }
+
+    </div>
+  }
+
+  @if (!isLoading && errorMessage) {
+    <div class="alert alert--danger">
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+
+  @if (!isLoading && !errorMessage && events.length === 0) {
+    <div class="empty-state">
+
+      <div class="empty-state__title">
+        No events available
+      </div>
+
+      <p class="empty-state__desc">
+        Check back soon for upcoming shows and screenings.
+      </p>
+
+    </div>
+  }
+
+  @if (
+    !isLoading &&
+    !errorMessage &&
+    events.length > 0 &&
+    filteredEvents.length > 0
+  ) {
+    <div class="event-grid">
+
+      @for (event of filteredEvents; track event.id) {
+        <div class="card event-card-basic">
+
+          <div class="event-card-basic__top">
+            <h3>{{ event.title }}</h3>
+
+            <span class="badge badge--accent">
+              {{ event.category }}
+            </span>
+          </div>
+
+          <p class="event-card-basic__desc">
+            {{ event.description }}
+          </p>
+
+          <p class="event-card-basic__meta text-secondary">
+            {{ event.start_time | date:'medium' }}
+          </p>
+
+          <div class="event-card-basic__footer">
+
+            <span class="mono event-card-basic__price">
+              ₹{{ event.base_price }}
+            </span>
+
+            <button
+              class="btn btn--primary btn--sm"
+              (click)="selectEvent(event.id)"
+            >
+              View event
+            </button>
+
+          </div>
+
+        </div>
+      }
+
+    </div>
+  }
+
+  @if (
+    !isLoading &&
+    !errorMessage &&
+    events.length > 0 &&
+    filteredEvents.length === 0
+  ) {
+    <div class="empty-state">
+
+      <div class="empty-state__title">
+        No matching events
+      </div>
+
+      <p class="empty-state__desc">
+        Try changing your search or filters.
+      </p>
+
+      <button
+        type="button"
+        class="btn btn--primary"
+        (click)="clearFilters()"
+      >
+        Clear filters
+      </button>
+
+    </div>
+  }
+
+</div>

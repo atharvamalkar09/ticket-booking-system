@@ -1,0 +1,212 @@
+<div class="venue-details-page">
+
+  @if (isLoading) {
+
+    <div class="loading-state">
+      Loading venue...
+    </div>
+
+  }
+
+
+  @if (!isLoading && errorMessage) {
+
+    <div class="error-state">
+
+      <h2>
+        Unable to Load Venue
+      </h2>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        (click)="goBack()"
+      >
+        Back to Venues
+      </button>
+
+    </div>
+
+  }
+
+
+  @if (!isLoading && venue) {
+
+    <div class="page-header">
+
+      <div>
+
+        <p class="page-label">
+          Admin / Venues / Details
+        </p>
+
+        <h1>
+          {{ venue.name }}
+        </h1>
+
+        <p>
+          {{ venue.location }}
+        </p>
+
+      </div>
+
+      <div class="header-actions">
+
+        <button
+          type="button"
+          (click)="goBack()"
+        >
+          Back to Venues
+        </button>
+
+        <button
+          type="button"
+          (click)="editVenue()"
+        >
+          Edit Venue
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <section class="details-section">
+
+      <h2>
+        Venue Information
+      </h2>
+
+
+      <div class="details-grid">
+
+        <div class="detail-card">
+
+          <span class="detail-label">
+            Venue ID
+          </span>
+
+          <strong>
+            #{{ venue.id }}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-card">
+
+          <span class="detail-label">
+            Name
+          </span>
+
+          <strong>
+            {{ venue.name }}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-card">
+
+          <span class="detail-label">
+            Location
+          </span>
+
+          <strong>
+            {{ venue.location }}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-card">
+
+          <span class="detail-label">
+            Capacity
+          </span>
+
+          <strong>
+            {{ venue.capacity }}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-card">
+
+          <span class="detail-label">
+            Created
+          </span>
+
+          <strong>
+            {{ venue.created_at | date:'medium' }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="details-section">
+
+      <h2>
+        Description
+      </h2>
+
+      <div class="description-box">
+
+        @if (venue.description) {
+
+          <p>
+            {{ venue.description }}
+          </p>
+
+        } @else {
+
+          <p class="no-description">
+            No description has been provided for this venue.
+          </p>
+
+        }
+
+      </div>
+
+    </section>
+
+
+    <section class="details-section">
+
+      <h2>
+        Capacity
+      </h2>
+
+      <div class="capacity-display">
+
+        <div class="capacity-number">
+          {{ venue.capacity }}
+        </div>
+
+        <div>
+
+          <strong>
+            Total Capacity
+          </strong>
+
+          <p>
+            Maximum number of seats supported by this venue.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  }
+
+</div>

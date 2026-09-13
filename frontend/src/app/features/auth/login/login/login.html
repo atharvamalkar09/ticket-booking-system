@@ -1,0 +1,109 @@
+<app-navbar></app-navbar>
+
+<div class="auth-page">
+  <div class="login-container card">
+
+    <div class="login-container__header">
+      <h2>Sign in</h2>
+      <p class="text-secondary">Enter your details to continue.</p>
+    </div>
+
+    <form (ngSubmit)="onLogin()" novalidate>
+
+      <div class="field">
+        <label class="field__label" for="email">Email</label>
+
+        <input
+          class="input"
+          type="email"
+          id="email"
+          [(ngModel)]="userData.email"
+          name="email"
+          placeholder="Enter your Email"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="password">Password</label>
+
+        <input
+          class="input"
+          type="password"
+          id="password"
+          [(ngModel)]="userData.password"
+          name="password"
+          placeholder="••••••••"
+          required
+        />
+      </div>
+
+      <button
+        class="btn btn--primary btn--full btn--lg"
+        type="submit"
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? 'Signing in…' : 'Sign in' }}
+      </button>
+
+    </form>
+
+    <p class="login-container__footer text-secondary">
+      New here?
+      <a href="/register">Create an account</a>
+    </p>
+
+  </div>
+</div>
+
+
+@if (showLoginDialog) {
+
+  <div
+    class="login-dialog-backdrop"
+    (click)="closeLoginDialogOnBackdrop($event)"
+  >
+
+    <div
+      class="login-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="login-dialog-title"
+    >
+
+      <div class="login-dialog__icon">
+        !
+      </div>
+
+      <div class="login-dialog__content">
+
+        <h2
+          id="login-dialog-title"
+          class="login-dialog__title"
+        >
+          Login failed
+        </h2>
+
+        <p class="login-dialog__message">
+          {{ errorMessage }}
+        </p>
+
+      </div>
+
+      <div class="login-dialog__actions">
+
+        <button
+          type="button"
+          class="login-dialog__button login-dialog__button--confirm"
+          (click)="closeLoginDialog()"
+        >
+          OK
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}

@@ -1,0 +1,244 @@
+<div class="venue-edit-page">
+
+  <div class="page-header">
+
+    <div>
+      <p class="page-label">
+        Admin / Venues / Edit
+      </p>
+
+      <h1>
+        Edit Venue
+      </h1>
+
+      @if (venue) {
+        <p>
+          Update details for {{ venue.name }}.
+        </p>
+      }
+    </div>
+
+  </div>
+
+
+  @if (isLoading) {
+
+    <div class="loading-state">
+      Loading venue...
+    </div>
+
+  }
+
+
+  @if (!isLoading && errorMessage && !venue) {
+
+    <div class="error-state">
+
+      <h2>
+        Unable to Load Venue
+      </h2>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        (click)="cancel()"
+      >
+        Back
+      </button>
+
+    </div>
+
+  }
+
+
+  @if (!isLoading && venue) {
+
+    <form
+      [formGroup]="venueForm"
+      (ngSubmit)="updateVenue()"
+      class="venue-form"
+    >
+
+      @if (errorMessage) {
+
+        <div class="form-error">
+          {{ errorMessage }}
+        </div>
+
+      }
+
+
+      <div class="form-group">
+
+        <label for="name">
+          Venue Name
+        </label>
+
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Enter venue name"
+        >
+
+        @if (
+          venueForm.controls.name.touched &&
+          venueForm.controls.name.invalid
+        ) {
+
+          <small>
+
+            @if (venueForm.controls.name.errors?.['required']) {
+              Venue name is required.
+            }
+
+            @if (venueForm.controls.name.errors?.['minlength']) {
+              Venue name must be at least 2 characters.
+            }
+
+            @if (venueForm.controls.name.errors?.['maxlength']) {
+              Venue name cannot exceed 100 characters.
+            }
+
+          </small>
+
+        }
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="location">
+          Location
+        </label>
+
+        <input
+          id="location"
+          type="text"
+          formControlName="location"
+          placeholder="Enter venue location"
+        >
+
+        @if (
+          venueForm.controls.location.touched &&
+          venueForm.controls.location.invalid
+        ) {
+
+          <small>
+
+            @if (venueForm.controls.location.errors?.['required']) {
+              Location is required.
+            }
+
+            @if (venueForm.controls.location.errors?.['minlength']) {
+              Location must be at least 2 characters.
+            }
+
+            @if (venueForm.controls.location.errors?.['maxlength']) {
+              Location cannot exceed 255 characters.
+            }
+
+          </small>
+
+        }
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="capacity">
+          Capacity
+        </label>
+
+        <input
+          id="capacity"
+          type="number"
+          formControlName="capacity"
+          min="1"
+          placeholder="Enter venue capacity"
+        >
+
+        @if (
+          venueForm.controls.capacity.touched &&
+          venueForm.controls.capacity.invalid
+        ) {
+
+          <small>
+
+            @if (venueForm.controls.capacity.errors?.['required']) {
+              Capacity is required.
+            }
+
+            @if (venueForm.controls.capacity.errors?.['min']) {
+              Capacity must be greater than zero.
+            }
+
+          </small>
+
+        }
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="description">
+          Description
+        </label>
+
+        <textarea
+          id="description"
+          rows="5"
+          formControlName="description"
+          placeholder="Enter venue description"
+        ></textarea>
+
+        @if (
+          venueForm.controls.description.touched &&
+          venueForm.controls.description.errors?.['maxlength']
+        ) {
+
+          <small>
+            Description cannot exceed 500 characters.
+          </small>
+
+        }
+
+      </div>
+
+
+      <div class="form-actions">
+
+        <button
+          type="button"
+          (click)="cancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          [disabled]="isSubmitting"
+        >
+
+          @if (isSubmitting) {
+            Updating...
+          } @else {
+            Update Venue
+          }
+
+        </button>
+
+      </div>
+
+    </form>
+
+  }
+
+</div>

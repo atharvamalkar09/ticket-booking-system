@@ -1,0 +1,567 @@
+<app-navbar></app-navbar>
+<div class="admin-dashboard">
+
+  <!-- ====================================================== -->
+  <!-- HEADER -->
+  <!-- ====================================================== -->
+
+  <div class="dashboard-header">
+
+    <div>
+      <h1>Admin Dashboard</h1>
+
+      <p>
+        Overview of your ticket booking system
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="refresh-button"
+      (click)="refreshDashboard()"
+      [disabled]="isLoading"
+    >
+      <span *ngIf="!isLoading">↻</span>
+      <span *ngIf="isLoading">⟳</span>
+
+      {{ isLoading ? 'Loading...' : 'Refresh' }}
+    </button>
+
+  </div>
+
+
+  <!-- ====================================================== -->
+  <!-- ERROR -->
+  <!-- ====================================================== -->
+
+  <div
+    class="error-message"
+    *ngIf="errorMessage"
+  >
+
+    <span>
+      {{ errorMessage }}
+    </span>
+
+    <button
+      type="button"
+      (click)="refreshDashboard()"
+    >
+      Retry
+    </button>
+
+  </div>
+
+
+  <!-- ====================================================== -->
+  <!-- LOADING -->
+  <!-- ====================================================== -->
+
+  <div
+    class="loading-container"
+    *ngIf="isLoading"
+  >
+
+    <div class="spinner"></div>
+
+    <p>
+      Loading dashboard...
+    </p>
+
+  </div>
+
+
+  <!-- ====================================================== -->
+  <!-- DASHBOARD CONTENT -->
+  <!-- ====================================================== -->
+
+  <div
+    class="dashboard-content"
+    *ngIf="!isLoading && dashboardData"
+  >
+
+
+    <!-- ==================================================== -->
+    <!-- USER STATISTICS -->
+    <!-- ==================================================== -->
+
+    <section class="dashboard-section">
+
+      <div class="section-header">
+
+        <div>
+          <h2>Users</h2>
+
+          <p>
+            User account statistics
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="manage-button"
+          (click)="goToUsers()"
+        >
+          Manage Users
+        </button>
+
+      </div>
+
+
+      <div class="stats-grid">
+
+
+        <!-- TOTAL USERS -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon users-icon">
+            👥
+          </div>
+
+          <div class="stat-info">
+
+            <span class="stat-label">
+              Total Users
+            </span>
+
+            <strong class="stat-value">
+              {{ dashboardData.total_users }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- ACTIVE USERS -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon active-icon">
+            ✓
+          </div>
+
+          <div class="stat-info">
+
+            <span class="stat-label">
+              Active Users
+            </span>
+
+            <strong class="stat-value">
+              {{ dashboardData.active_users }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- INACTIVE USERS -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon inactive-icon">
+            !
+          </div>
+
+          <div class="stat-info">
+
+            <span class="stat-label">
+              Inactive Users
+            </span>
+
+            <strong class="stat-value">
+              {{ dashboardData.inactive_users }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==================================================== -->
+    <!-- EVENT & VENUE STATISTICS -->
+    <!-- ==================================================== -->
+
+    <section class="dashboard-section">
+
+      <div class="section-header">
+
+        <div>
+          <h2>Events & Venues</h2>
+
+          <p>
+            Event and venue overview
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="stats-grid">
+
+
+        <!-- EVENTS -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon event-icon">
+            🎟️
+          </div>
+
+          <div class="stat-info">
+
+            <span class="stat-label">
+              Total Events
+            </span>
+
+            <strong class="stat-value">
+              {{ dashboardData.total_events }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- VENUES -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon venue-icon">
+            🏢
+          </div>
+
+          <div class="stat-info">
+
+            <span class="stat-label">
+              Total Venues
+            </span>
+
+            <strong class="stat-value">
+              {{ dashboardData.total_venues }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="quick-actions">
+
+        <button
+          type="button"
+          (click)="goToEvents()"
+        >
+          Manage Events
+        </button>
+
+        <button
+          type="button"
+          (click)="goToVenues()"
+        >
+          Manage Venues
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==================================================== -->
+    <!-- BOOKING STATISTICS -->
+    <!-- ==================================================== -->
+
+    <section class="dashboard-section">
+
+      <div class="section-header">
+
+        <div>
+          <h2>Bookings</h2>
+
+          <p>
+            Booking status overview
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="manage-button"
+          (click)="goToBookings()"
+        >
+          Manage Bookings
+        </button>
+
+      </div>
+
+
+      <div class="stats-grid booking-grid">
+
+
+        <!-- TOTAL BOOKINGS -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon booking-icon">
+            📋
+          </div>
+
+          <div class="stat-info">
+
+            <span class="stat-label">
+              Total Bookings
+            </span>
+
+            <strong class="stat-value">
+              {{ dashboardData.total_bookings }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- CONFIRMED -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon confirmed-icon">
+            ✓
+          </div>
+
+          <div class="stat-info">
+
+            <span class="stat-label">
+              Confirmed
+            </span>
+
+            <strong class="stat-value">
+              {{ dashboardData.confirmed_bookings }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- PENDING -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon pending-icon">
+            ⏳
+          </div>
+
+          <div class="stat-info">
+
+            <span class="stat-label">
+              Pending
+            </span>
+
+            <strong class="stat-value">
+              {{ dashboardData.pending_bookings }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- CANCELLED -->
+
+        <div class="stat-card">
+
+          <div class="stat-icon cancelled-icon">
+            ✕
+          </div>
+
+          <div class="stat-info">
+
+            <span class="stat-label">
+              Cancelled
+            </span>
+
+            <strong class="stat-value">
+              {{ dashboardData.cancelled_bookings }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==================================================== -->
+    <!-- RECENT BOOKINGS -->
+    <!-- ==================================================== -->
+
+    <section class="dashboard-section recent-section">
+
+      <div class="section-header">
+
+        <div>
+          <h2>Recent Bookings</h2>
+
+          <p>
+            Latest booking activity
+          </p>
+        </div>
+
+      </div>
+
+
+      <div
+        class="table-container"
+        *ngIf="dashboardData.recent_bookings.length > 0"
+      >
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Booking ID
+              </th>
+
+              <th>
+                User
+              </th>
+
+              <th>
+                Event
+              </th>
+
+              <th>
+                Amount
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Date
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            <tr
+              *ngFor="
+                let booking
+                of dashboardData.recent_bookings
+              "
+            >
+
+              <td>
+                #{{ booking.id }}
+              </td>
+
+              <td>
+
+                <div class="user-info">
+
+                  <strong>
+                    {{ booking.username }}
+                  </strong>
+
+                  <span>
+                    User ID: {{ booking.user_id }}
+                  </span>
+
+                </div>
+
+              </td>
+
+              <td>
+
+                <div class="event-info">
+
+                  <strong>
+                    {{ booking.event_title }}
+                  </strong>
+
+                  <span>
+                    Event ID: {{ booking.event_id }}
+                  </span>
+
+                </div>
+
+              </td>
+
+              <td>
+                ₹{{ booking.total_price | number:'1.2-2' }}
+              </td>
+
+              <td>
+
+                <span
+                  class="booking-status"
+                  [ngClass]="
+                    getStatusClass(booking.status)
+                  "
+                >
+                  {{ booking.status }}
+                </span>
+
+              </td>
+
+              <td>
+                {{ formatDate(booking.created_at) }}
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <!-- NO RECENT BOOKINGS -->
+
+      <div
+        class="no-bookings"
+        *ngIf="dashboardData.recent_bookings.length === 0"
+      >
+
+        <div class="empty-icon">
+          📋
+        </div>
+
+        <h3>
+          No bookings yet
+        </h3>
+
+        <p>
+          Recent bookings will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+  </div>
+  
+</div>

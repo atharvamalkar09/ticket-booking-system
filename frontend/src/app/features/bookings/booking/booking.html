@@ -1,0 +1,233 @@
+<app-navbar></app-navbar>
+
+<div class="container booking-page">
+
+  <h2>Confirm your booking</h2>
+
+  @if (event && venue && selectedSeats.length > 0 && !successMessage) {
+
+    <div class="booking-page__layout">
+
+      <div class="booking-page__details">
+
+        <!-- Event -->
+        <div class="card booking-page__section">
+          <h3>Event details</h3>
+          <h4>{{ event.title }}</h4>
+          <p class="booking-page__row"><span class="text-secondary">Category</span> {{ event.category }}</p>
+          <p class="booking-page__row"><span class="text-secondary">Date &amp; time</span> {{ event.start_time | date:'medium' }}</p>
+          <p class="booking-page__row"><span class="text-secondary">Price per seat</span> <span class="mono">₹{{ event.base_price }}</span></p>
+        </div>
+
+        <!-- Venue -->
+        <div class="card booking-page__section">
+          <h3>Venue</h3>
+          <h4>{{ venue.name }}</h4>
+          <p class="text-secondary">{{ venue.location }}</p>
+
+          <!-- @if (venue.description) {
+            <p>{{ venue.description }}</p>
+          } -->
+
+          <!-- <p class="booking-page__row"><span class="text-secondary">Capacity</span> {{ venue.capacity }}</p> -->
+        </div>
+
+        <!-- Seats -->
+        <div class="card booking-page__section">
+          <h3>Selected seats</h3>
+
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Seat</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (seat of selectedSeats; track seat.id) {
+                  <tr>
+                    <td class="mono">{{ seat.label }}</td>
+                    <td>{{ seat.category }}</td>
+                    <td class="mono">₹{{ event.base_price }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Price summary -->
+      <div class="card booking-summary booking-page__summary">
+
+        <h3>Price summary</h3>
+
+        <div class="booking-summary__row">
+          <span>Number of seats</span>
+          <span>{{ selectedSeats.length }}</span>
+        </div>
+
+        <div class="booking-summary__row">
+          <span>Price per seat</span>
+          <span class="mono">₹{{ event.base_price }}</span>
+        </div>
+
+        <div class="booking-summary__row booking-summary__row--total">
+          <span>Total amount</span>
+          <span class="mono">₹{{ totalPrice }}</span>
+        </div>
+
+        <div class="booking-page__actions">
+
+          <button
+            type="button"
+            class="btn btn--primary btn--full btn--lg"
+            (click)="confirmBooking()"
+            [disabled]="isBooking"
+          >
+            {{ isBooking ? 'Processing…' : 'Pay ₹' + totalPrice }}
+          </button>
+
+          <button
+            type="button"
+            class="btn btn--secondary btn--full"
+            (click)="goBack()"
+            [disabled]="isBooking"
+          >
+            ← Back to seats
+          </button>
+
+          <button
+            type="button"
+            class="btn btn--ghost btn--full"
+            (click)="cancelBooking()"
+            [disabled]="isBooking"
+          >
+            Cancel
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+  @if ((!event || !venue || selectedSeats.length === 0) && !successMessage) {
+    <div class="empty-state">
+      <div class="empty-state__title">No booking information available</div>
+      <p class="empty-state__desc">Please select your seats again to continue.</p>
+      <button type="button" class="btn btn--primary" (click)="cancelBooking()">
+        Go to events
+      </button>
+    </div>
+  }
+
+</div>
+
+@if (showPaymentErrorDialog) {
+
+  <div
+    class="payment-dialog-backdrop"
+    (click)="closePaymentErrorDialogOnBackdrop($event)"
+  >
+
+    <div
+      class="payment-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="payment-error-dialog-title"
+    >
+
+      <div class="payment-dialog__icon payment-dialog__icon--error">
+        !
+      </div>
+
+      <div class="payment-dialog__content">
+
+        <h2
+          id="payment-error-dialog-title"
+          class="payment-dialog__title"
+        >
+          Payment failed
+        </h2>
+
+        <p class="payment-dialog__message">
+          {{ errorMessage }}
+        </p>
+
+      </div>
+
+      <div class="payment-dialog__actions">
+
+        <button
+          type="button"
+          class="payment-dialog__button payment-dialog__button--confirm"
+          (click)="closePaymentErrorDialog()"
+        >
+          OK
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}
+
+
+@if (showPaymentSuccessDialog) {
+
+  <div
+    class="payment-dialog-backdrop"
+    (click)="closePaymentSuccessDialogOnBackdrop($event)"
+  >
+
+    <div
+      class="payment-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="payment-success-dialog-title"
+    >
+
+      <div class="payment-dialog__icon payment-dialog__icon--success">
+        ✓
+      </div>
+
+      <div class="payment-dialog__content">
+
+        <h2
+          id="payment-success-dialog-title"
+          class="payment-dialog__title"
+        >
+          Payment successful
+        </h2>
+
+        <p class="payment-dialog__message">
+          Your payment was successful and your booking is confirmed.
+        </p>
+
+      </div>
+
+      <div class="payment-dialog__actions">
+
+        <button
+          type="button"
+          class="payment-dialog__button payment-dialog__button--confirm"
+          (click)="closePaymentSuccessDialog()"
+        >
+          View bookings
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}

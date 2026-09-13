@@ -1,0 +1,163 @@
+<div class="admin-events-page">
+
+  <div class="page-header">
+
+    <div>
+      <h1>Events</h1>
+      <p>Manage all events in the system.</p>
+    </div>
+
+    <button
+      type="button"
+      (click)="createEvent()"
+    >
+      + Create Event
+    </button>
+
+  </div>
+
+
+  @if (isLoading) {
+
+    <div class="loading-state">
+      Loading events...
+    </div>
+
+  }
+
+
+  @if (!isLoading && errorMessage) {
+
+    <div class="error-state">
+      {{ errorMessage }}
+    </div>
+
+  }
+
+
+  @if (!isLoading && !errorMessage && events.length === 0) {
+
+    <div class="empty-state">
+
+      <h3>No Events Found</h3>
+
+      <p>
+        There are currently no events in the system.
+      </p>
+
+      <button
+        type="button"
+        (click)="createEvent()"
+      >
+        Create Your First Event
+      </button>
+
+    </div>
+
+  }
+
+
+  @if (!isLoading && events.length > 0) {
+
+    <div class="events-container">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Event</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Venues</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          @for (event of events; track event.id) {
+
+            <tr class="event-row" (click)="viewEvent(event.id)">
+
+              <td>
+                #{{ event.id }}
+              </td>
+
+              <td>
+                <strong>
+                  {{ event.title }}
+                </strong>
+              </td>
+
+              <td>
+                {{ event.category }}
+              </td>
+
+              <td>
+                {{ event.start_time | date:'medium' }}
+              </td>
+
+              <td>
+                ₹{{ event.base_price }}
+              </td>
+
+              <td>
+
+                <span class="venue-count">
+                  {{ event.venues.length }}
+                </span>
+
+              </td>
+
+              <td>
+
+                <div
+                  class="action-buttons"
+                  (click)="$event.stopPropagation()"
+                >
+
+                  <button
+                    type="button"
+                    (click)="editEvent(event.id)"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    type="button"
+                    (click)="deleteEvent(event.id)"
+                  >
+                    Delete
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  }
+
+</div>
+
+<app-dialog
+  [isOpen]="dialogService.isOpen()"
+  [title]="dialogService.config().title"
+  [message]="dialogService.config().message"
+  [type]="dialogService.config().type ?? 'info'"
+  [confirmText]="dialogService.config().confirmText ?? 'OK'"
+  [cancelText]="dialogService.config().cancelText ?? 'Cancel'"
+  [showCancel]="dialogService.config().showCancel ?? false"
+  (confirmed)="dialogService.confirmAction()"
+  (cancelled)="dialogService.cancelAction()"
+></app-dialog>

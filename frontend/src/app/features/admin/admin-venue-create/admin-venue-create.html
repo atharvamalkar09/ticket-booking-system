@@ -1,0 +1,193 @@
+<div class="create-venue-page">
+
+  <div class="page-header">
+
+    <div>
+
+      <p class="page-label">
+        Admin / Venues / Create
+      </p>
+
+      <h1>
+        Create Venue
+      </h1>
+
+      <p>
+        Add a new venue to the system.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      (click)="cancel()"
+      [disabled]="isSubmitting"
+    >
+      Back to Venues
+    </button>
+
+  </div>
+
+
+  @if (errorMessage) {
+
+    <div class="error-message">
+      {{ errorMessage }}
+    </div>
+
+  }
+
+
+  <form
+    [formGroup]="venueForm"
+    (ngSubmit)="createVenue()"
+  >
+
+    <section class="form-section">
+
+      <h2>Venue Information</h2>
+
+
+      <div class="form-group">
+
+        <label for="name">
+          Venue Name
+        </label>
+
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="e.g. PVR Cinemas"
+        />
+
+        @if (
+          venueForm.controls.name.touched &&
+          venueForm.controls.name.invalid
+        ) {
+
+          <small>
+            Venue name must be between
+            2 and 100 characters.
+          </small>
+
+        }
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="location">
+          Location
+        </label>
+
+        <input
+          id="location"
+          type="text"
+          formControlName="location"
+          placeholder="e.g. Lower Parel, Mumbai"
+        />
+
+        @if (
+          venueForm.controls.location.touched &&
+          venueForm.controls.location.invalid
+        ) {
+
+          <small>
+            Location must be between
+            2 and 255 characters.
+          </small>
+
+        }
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="capacity">
+          Capacity
+        </label>
+
+        <input
+          id="capacity"
+          type="number"
+          min="1"
+          step="1"
+          formControlName="capacity"
+          placeholder="e.g. 500"
+        />
+
+        @if (
+          venueForm.controls.capacity.touched &&
+          venueForm.controls.capacity.invalid
+        ) {
+
+          <small>
+            Capacity must be greater than zero.
+          </small>
+
+        }
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="description">
+          Description
+        </label>
+
+        <textarea
+          id="description"
+          rows="5"
+          formControlName="description"
+          placeholder="Describe the venue..."
+        ></textarea>
+
+        @if (
+          venueForm.controls.description.touched &&
+          venueForm.controls.description.invalid
+        ) {
+
+          <small>
+            Description cannot exceed 500 characters.
+          </small>
+
+        }
+
+      </div>
+
+    </section>
+
+
+    <div class="form-actions">
+
+      <button
+        type="button"
+        (click)="cancel()"
+        [disabled]="isSubmitting"
+      >
+        Cancel
+      </button>
+
+
+      <button
+        type="submit"
+        [disabled]="isSubmitting"
+      >
+
+        @if (isSubmitting) {
+          Creating...
+        } @else {
+          Create Venue
+        }
+
+      </button>
+
+    </div>
+
+  </form>
+
+</div>

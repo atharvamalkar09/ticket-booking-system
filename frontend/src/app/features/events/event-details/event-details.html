@@ -1,0 +1,123 @@
+<app-navbar></app-navbar>
+
+<div class="container event-details-page">
+
+  @if (isLoading) {
+    <div class="card event-details">
+      <div
+        class="skeleton"
+        style="height: 28px; width: 60%; margin-bottom: 16px;"
+      ></div>
+
+      <div
+        class="skeleton"
+        style="height: 14px; width: 100%; margin-bottom: 8px;"
+      ></div>
+
+      <div
+        class="skeleton"
+        style="height: 14px; width: 90%; margin-bottom: 20px;"
+      ></div>
+
+      <div
+        class="skeleton"
+        style="height: 14px; width: 40%;"
+      ></div>
+    </div>
+  }
+
+  @if (!isLoading && errorMessage) {
+    <div class="alert alert--danger">
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+
+  @if (!isLoading && event) {
+    <div class="card event-details">
+
+      <div class="event-details__header">
+        <span class="badge badge--accent">
+          {{ event.category }}
+        </span>
+
+        <h2>
+          {{ event.title }}
+        </h2>
+      </div>
+
+      @if (event.description) {
+        <p class="event-details__desc">
+          {{ event.description }}
+        </p>
+      }
+
+      <div class="event-details__meta">
+        <div class="event-details__meta-item">
+          <span class="text-secondary">
+            Starts
+          </span>
+
+          <span>
+            {{ event.start_time | date:'medium' }}
+          </span>
+        </div>
+
+        <div class="event-details__meta-item">
+          <span class="text-secondary">
+            Ends
+          </span>
+
+          <span>
+            {{ event.end_time | date:'medium' }}
+          </span>
+        </div>
+
+        <div class="event-details__meta-item">
+          <span class="text-secondary">
+            Price
+          </span>
+
+          <span class="mono">
+            ₹{{ event.base_price }}
+          </span>
+        </div>
+      </div>
+
+      <div class="venues-section">
+        <h3>
+          Venues
+        </h3>
+
+        @if (event.venues && event.venues.length > 0) {
+          <p class="text-secondary">
+            {{ event.venues.length }} venue(s) available for this event.
+          </p>
+
+          <button
+            type="button"
+            class="btn btn--primary"
+            (click)="selectVenues()"
+          >
+            Select venue
+          </button>
+        }
+
+        @else {
+          <p class="text-secondary">
+            No venues are available for this event.
+          </p>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="btn btn--ghost event-details__back"
+        (click)="goBack()"
+      >
+        ← Back to events
+      </button>
+
+    </div>
+  }
+
+</div>

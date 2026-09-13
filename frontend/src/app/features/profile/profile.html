@@ -1,0 +1,479 @@
+<app-navbar></app-navbar>
+
+<main class="profile-page">
+  <div class="profile-shell">
+
+@if (isLoading) {
+  <section class="profile-state">
+    <div class="loading-spinner"></div>
+    <p>Loading your profile...</p>
+  </section>
+}
+
+@else if (errorMessage) {
+  <section class="profile-state error-state">
+    <span class="state-icon">!</span>
+
+    <h2>Unable to load profile</h2>
+
+    <p>{{ errorMessage }}</p>
+
+    <button
+      type="button"
+      class="retry-button"
+      (click)="loadProfile()"
+    >
+      Try Again
+    </button>
+  </section>
+}
+
+@else if (user) {
+  <section class="profile-header">
+    <div>
+      <span class="eyebrow">ACCOUNT</span>
+
+      <h1>Your Profile</h1>
+
+      <p>
+        Manage your account information and ticket-booking activity.
+      </p>
+    </div>
+
+    @if (!isEditing) {
+      <button
+        type="button"
+        class="edit-profile-button"
+        (click)="startEditing()"
+      >
+        Edit Profile
+      </button>
+    }
+  </section>
+
+  <section class="profile-card">
+    <div class="profile-avatar">
+      {{ user.username.charAt(0).toUpperCase() }}
+    </div>
+
+    <div class="profile-info">
+      @if (!isEditing) {
+        <div class="profile-name">
+          {{ user.username }}
+        </div>
+
+        <div class="profile-email">
+          {{ user.email }}
+        </div>
+      }
+
+      @else {
+        <div class="profile-name">
+          Edit your account
+        </div>
+
+        <div class="profile-email">
+          Update your personal information below
+        </div>
+      }
+
+      <span
+        class="role-badge"
+        [class.admin]="user.role === 'ADMIN'"
+      >
+        {{ user.role }}
+      </span>
+    </div>
+  </section>
+
+  @if (isEditing) {
+    <section class="section edit-profile-section">
+      <div class="section-heading">
+        <span class="eyebrow">
+          EDIT PROFILE
+        </span>
+
+        <h2>
+          Update account details
+        </h2>
+
+        <p>
+          Update the information associated with your account.
+        </p>
+      </div>
+
+      <div class="edit-form">
+        <div class="form-group">
+          <label for="username">
+            Username
+          </label>
+
+          <input
+            id="username"
+            type="text"
+            [(ngModel)]="editForm.username"
+            placeholder="Enter username"
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">
+            Email
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            [(ngModel)]="editForm.email"
+            placeholder="Enter email"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">
+            Phone Number
+          </label>
+
+          <input
+            id="phone"
+            type="tel"
+            [(ngModel)]="editForm.phone_no"
+            placeholder="Enter phone number"
+            autocomplete="tel"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="city">
+            City
+          </label>
+
+          <input
+            id="city"
+            type="text"
+            [(ngModel)]="editForm.city"
+            placeholder="Enter city"
+            autocomplete="address-level2"
+          />
+        </div>
+
+        <div class="form-group form-group-wide">
+          <label for="address">
+            Address
+          </label>
+
+          <textarea
+            id="address"
+            [(ngModel)]="editForm.address"
+            placeholder="Enter your address"
+            rows="4"
+            autocomplete="street-address"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="edit-actions">
+        <button
+          type="button"
+          class="cancel-button"
+          [disabled]="isSaving"
+          (click)="cancelEditing()"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="save-profile-button"
+          [disabled]="isSaving"
+          (click)="saveProfile()"
+        >
+          @if (isSaving) {
+            <span class="button-spinner"></span>
+            Saving...
+          }
+
+          @else {
+            Save Changes
+          }
+        </button>
+      </div>
+    </section>
+  }
+
+  @if (!isEditing) {
+    <section class="section">
+      <div class="section-heading">
+        <span class="eyebrow">
+          PERSONAL INFORMATION
+        </span>
+
+        <h2>
+          Account details
+        </h2>
+      </div>
+
+      <div class="details-grid">
+        <div class="detail-card">
+          <span class="detail-label">
+            USERNAME
+          </span>
+
+          <span class="detail-value">
+            {{ user.username }}
+          </span>
+        </div>
+
+        <div class="detail-card">
+          <span class="detail-label">
+            EMAIL
+          </span>
+
+          <span class="detail-value">
+            {{ user.email }}
+          </span>
+        </div>
+
+        <div class="detail-card">
+          <span class="detail-label">
+            PHONE
+          </span>
+
+          <span class="detail-value">
+            {{ user.phone_no }}
+          </span>
+        </div>
+
+        <div class="detail-card">
+          <span class="detail-label">
+            CITY
+          </span>
+
+          <span class="detail-value">
+            {{ user.city }}
+          </span>
+        </div>
+
+        <div class="detail-card detail-card-wide">
+          <span class="detail-label">
+            ADDRESS
+          </span>
+
+          <span class="detail-value">
+            {{ user.address || 'No address provided' }}
+          </span>
+        </div>
+
+        <div class="detail-card">
+          <span class="detail-label">
+            ACCOUNT STATUS
+          </span>
+
+          <span
+            class="detail-value"
+            [class.status-active]="user.is_active"
+            [class.status-inactive]="!user.is_active"
+          >
+            {{ user.is_active ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+
+        <div class="detail-card">
+          <span class="detail-label">
+            MEMBER SINCE
+          </span>
+
+          <span class="detail-value">
+            {{ user.created_at | date:'dd MMM yyyy' }}
+          </span>
+        </div>
+      </div>
+    </section>
+  }
+
+  @if (!isEditing) {
+    <section class="section">
+      <div class="section-heading">
+        <span class="eyebrow">
+          QUICK ACCESS
+        </span>
+
+        <h2>
+          What would you like to do?
+        </h2>
+      </div>
+
+      <div class="action-grid">
+        <button
+          class="action-card"
+          type="button"
+          (click)="goToEvents()"
+        >
+          <span class="action-icon">
+            →
+          </span>
+
+          <span>
+            <strong>
+              Browse Events
+            </strong>
+
+            <small>
+              Discover upcoming events
+            </small>
+          </span>
+        </button>
+
+        <button
+          class="action-card"
+          type="button"
+          (click)="goToBookings()"
+        >
+          <span class="action-icon">
+            →
+          </span>
+
+          <span>
+            <strong>
+              My Bookings
+            </strong>
+
+            <small>
+              View your tickets and bookings
+            </small>
+          </span>
+        </button>
+
+        @if (user.role === 'ADMIN') {
+          <button
+            class="action-card"
+            type="button"
+            (click)="goToAdmin()"
+          >
+            <span class="action-icon">
+              →
+            </span>
+
+            <span>
+              <strong>
+                Admin Dashboard
+              </strong>
+
+              <small>
+                Manage events, venues and users
+              </small>
+            </span>
+          </button>
+        }
+      </div>
+    </section>
+  }
+
+  @if (!isEditing) {
+    <section class="danger-zone">
+      <div class="danger-content">
+        <span class="eyebrow danger-eyebrow">
+          DANGER ZONE
+        </span>
+
+        <h2>
+          Delete your account
+        </h2>
+
+        <p>
+          Permanently delete your account and remove your access
+          to the ticket booking system.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="delete-account-button"
+        [disabled]="isDeleting"
+        (click)="confirmDeleteAccount()"
+      >
+        @if (isDeleting) {
+          Deleting...
+        }
+
+        @else {
+          Delete Account
+        }
+      </button>
+    </section>
+  }
+
+  @if (showDeleteConfirmation) {
+    <div class="modal-backdrop">
+      <div
+        class="delete-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-account-title"
+      >
+        <div class="modal-icon">
+          !
+        </div>
+
+        <div class="modal-content">
+          <span class="eyebrow danger-eyebrow">
+            CONFIRM ACTION
+          </span>
+
+          <h2 id="delete-account-title">
+            Delete your account?
+          </h2>
+
+          <p>
+            This action cannot be undone. Your account will be
+            permanently deleted.
+          </p>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="cancel-delete-button"
+            [disabled]="isDeleting"
+            (click)="cancelDeleteAccount()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="confirm-delete-button"
+            [disabled]="isDeleting"
+            (click)="deleteAccount()"
+          >
+            @if (isDeleting) {
+              <span class="button-spinner"></span>
+              Deleting...
+            }
+
+            @else {
+              Delete Account
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (!isEditing && !showDeleteConfirmation) {
+    <section class="logout-section">
+      <button
+        type="button"
+        class="logout-button"
+        (click)="onLogout()"
+      >
+        Sign Out
+      </button>
+    </section>
+  }
+}
+
+  </div>
+</main>

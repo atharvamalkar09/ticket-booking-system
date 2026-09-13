@@ -1,0 +1,189 @@
+.booking-page {
+  padding: var(--space-6) var(--space-5);
+  max-width: 980px;
+}
+
+.booking-page__alert {
+  margin-bottom: var(--space-4);
+}
+
+.booking-page__layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.booking-page__section {
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.booking-page__section h3 {
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-3);
+}
+
+.booking-page__section h4 {
+  margin-bottom: var(--space-2);
+}
+
+.booking-page__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  padding: var(--space-1) 0;
+  margin: 0;
+}
+
+.booking-page__summary {
+  padding: var(--space-5);
+  position: sticky;
+  top: var(--space-5);
+}
+
+.booking-page__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 860px) {
+  .booking-page__layout {
+    grid-template-columns: 1fr;
+  }
+  .booking-page__summary {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .booking-page {
+    padding: var(--space-5) var(--space-4);
+  }
+}
+
+/* ---------- Payment result dialog ---------- */
+.payment-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 8, 6, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 100;
+}
+
+.payment-dialog {
+  max-width: 400px;
+  width: 100%;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-hairline-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.payment-dialog:has(.payment-dialog__icon--error) {
+  border-color: var(--danger-border);
+}
+
+.payment-dialog__icon {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto var(--space-4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+.payment-dialog__icon--success { background: var(--success-muted); color: var(--success); }
+.payment-dialog__icon--error { background: var(--danger-muted); color: var(--danger); }
+
+.payment-dialog__title { font-size: var(--text-lg); margin-bottom: var(--space-2); }
+.payment-dialog__message { color: var(--text-secondary); margin: 0 0 var(--space-5); }
+
+.payment-dialog__actions { display: flex; justify-content: center; }
+
+.payment-dialog__button--confirm {
+  padding: 10px 24px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 160px;
+}
+.payment-dialog__button--confirm:hover { background: var(--accent-hover); color: var(--text-on-accent); }
+
+/* Error dialog gets a danger-colored button instead of the default accent one */
+.payment-dialog:has(.payment-dialog__icon--error) .payment-dialog__button--confirm {
+  background: var(--danger);
+}
+.payment-dialog:has(.payment-dialog__icon--error) .payment-dialog__button--confirm:hover {
+  background: var(--danger);
+  opacity: 0.9;
+}
+
+/* ---------- Payment result dialog ---------- */
+.payment-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 8, 6, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 100;
+}
+
+.payment-dialog {
+  max-width: 400px;
+  width: 100%;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-hairline-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.payment-dialog__icon {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto var(--space-4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+.payment-dialog__icon--success { background: var(--success-muted); color: var(--success); }
+.payment-dialog__icon--error { background: var(--danger-muted); color: var(--danger); }
+
+.payment-dialog__title { font-size: var(--text-lg); margin-bottom: var(--space-2); }
+.payment-dialog__message { color: var(--text-secondary); margin: 0 0 var(--space-5); }
+
+.payment-dialog__actions { display: flex; justify-content: center; }
+
+.payment-dialog__button--confirm {
+  padding: 10px 24px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 160px;
+}
+.payment-dialog__button--confirm:hover { background: var(--accent-hover); color: var(--text-on-accent); }

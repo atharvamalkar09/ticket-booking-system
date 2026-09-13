@@ -1,0 +1,208 @@
+:host {
+  display: block;
+}
+
+.landing-page {
+  min-height: 100vh;
+  background: var(--bg-base);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Nav ---------- */
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.landing-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-primary);
+}
+
+.landing-brand__mark {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font-family: var(--font-display);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+}
+
+.landing-brand__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-md);
+  letter-spacing: 0.02em;
+}
+
+.landing-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.landing-nav__signin {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.landing-nav__signin:hover {
+  color: var(--text-primary);
+}
+
+/* ---------- Hero ---------- */
+.landing-hero {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-8) var(--space-5);
+  overflow: hidden;
+}
+
+.landing-hero__glow {
+  display: none;
+}
+
+.landing-hero__content {
+  position: relative;
+  max-width: 640px;
+}
+
+.landing-hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: var(--space-4);
+}
+
+.landing-hero h1 {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-4);
+}
+
+.landing-hero h1 span {
+  color: var(--accent);
+}
+
+.landing-hero__description {
+  font-size: var(--text-md);
+  color: var(--text-secondary);
+  max-width: 46ch;
+  margin: 0 auto var(--space-6);
+}
+
+.landing-hero__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.landing-hero__primary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.landing-hero__primary,
+.landing-hero__primary:hover {
+  color: var(--text-on-accent);
+}
+
+.landing-hero__secondary {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.landing-hero__secondary:hover {
+  color: var(--text-primary);
+}
+
+/* ---------- Decorative stage strip ---------- */
+.landing-stage {
+  position: relative;
+  margin-top: var(--space-8);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.landing-stage__light {
+  display: none;
+}
+
+.landing-stage__screen {
+  width: 70%;
+  padding: var(--space-2) 0;
+  text-align: center;
+  border-bottom: 3px solid var(--border-hairline-strong);
+}
+
+.landing-stage__screen span {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+}
+
+.landing-stage__seats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.landing-stage__seats span {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--seat-available);
+  border: 1px solid var(--seat-available-border);
+}
+
+/* ---------- Footer ---------- */
+.landing-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--border-hairline);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .landing-nav {
+    padding: var(--space-3) var(--space-4);
+  }
+  .landing-hero {
+    padding: var(--space-6) var(--space-4);
+  }
+  .landing-hero h1 {
+    font-size: var(--text-2xl);
+  }
+  .landing-footer {
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: center;
+  }
+}

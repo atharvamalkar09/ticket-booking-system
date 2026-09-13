@@ -1,0 +1,83 @@
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 8, 6, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 100;
+}
+
+.dialog {
+  max-width: 400px;
+  width: 100%;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-hairline-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.dialog__icon {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto var(--space-4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  background: var(--bg-raised-2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-hairline);
+}
+
+.dialog--success .dialog__icon { background: var(--success-muted); color: var(--success); border-color: var(--success-border); }
+.dialog--error .dialog__icon { background: var(--danger-muted); color: var(--danger); border-color: var(--danger-border); }
+.dialog--warning .dialog__icon,
+.dialog--confirm .dialog__icon { background: var(--warning-muted); color: var(--warning); border-color: rgba(208,163,85,0.4); }
+.dialog--info .dialog__icon { background: var(--accent-muted); color: var(--accent); border-color: var(--accent-border); }
+
+.dialog__content { margin-bottom: var(--space-5); }
+.dialog__title { font-size: var(--text-lg); margin-bottom: var(--space-2); }
+.dialog__message { color: var(--text-secondary); margin: 0; }
+
+.dialog__actions { display: flex; justify-content: center; gap: var(--space-3); }
+
+.dialog__button {
+  padding: 10px 22px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dialog__button--cancel {
+  border: 1px solid var(--border-hairline-strong);
+  background: transparent;
+  color: var(--text-primary);
+}
+.dialog__button--cancel:hover { border-color: var(--accent); color: var(--accent); }
+
+.dialog__button--confirm {
+  border: none;
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+.dialog__button--confirm:hover { background: var(--accent-hover); color: var(--text-on-accent); }
+
+.dialog--error .dialog__button--confirm {
+  background: var(--danger);
+}
+.dialog--error .dialog__button--confirm:hover {
+  background: var(--danger);
+  opacity: 0.9;
+}
+
+@media (max-width: 480px) {
+  .dialog { padding: var(--space-4); }
+  .dialog__actions { flex-direction: column-reverse; }
+  .dialog__button { width: 100%; }
+}

@@ -1,0 +1,84 @@
+<div class="landing-page">
+  <header class="landing-nav">
+    <a
+      routerLink="/"
+      class="landing-brand"
+    >
+      <span class="landing-brand__mark">T</span>
+      <span class="landing-brand__name">TicketFlow</span>
+    </a>
+
+    <div class="landing-nav__actions">
+      <a
+        routerLink="/login"
+        class="landing-nav__signin"
+      >
+        Sign in
+      </a>
+
+      <a
+        routerLink="/register"
+        class="btn btn--primary btn--sm"
+      >
+        Sign up
+      </a>
+    </div>
+  </header>
+
+  <main class="landing-hero">
+    <div class="landing-hero__glow"></div>
+
+    <div class="landing-hero__content">
+      <p class="landing-hero__eyebrow">
+        DISCOVER · CHOOSE · EXPERIENCE
+      </p>
+
+      <h1>
+        Your seat.
+        <br>
+        <span>Your moment.</span>
+      </h1>
+
+      <p class="landing-hero__description">
+        Discover concerts, shows and live experiences.
+        Find the event you love and reserve your perfect seat.
+      </p>
+
+      <div class="landing-hero__actions">
+        <a
+          routerLink="/events"
+          class="btn btn--primary landing-hero__primary"
+        >
+          Browse events
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="landing-stage">
+      <div class="landing-stage__light landing-stage__light--left"></div>
+
+      <div class="landing-stage__light landing-stage__light--right"></div>
+
+      <div class="landing-stage__screen">
+        <span>LIVE</span>
+      </div>
+
+      <div class="landing-stage__seats">
+        @for (seat of [1, 2, 3, 4, 5, 6, 7, 8, 9]; track seat) {
+          <span></span>
+        }
+      </div>
+    </div>
+  </main>
+
+  <footer class="landing-footer">
+    <span>
+      TicketFlow
+    </span>
+
+    <span>
+      Experience more. Remember more.
+    </span>
+  </footer>
+</div>

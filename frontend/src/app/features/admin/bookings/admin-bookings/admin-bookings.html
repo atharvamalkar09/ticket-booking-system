@@ -1,0 +1,510 @@
+<div class="admin-bookings">
+
+  <!-- ============================================================
+       PAGE HEADER
+       ============================================================ -->
+
+  <div class="page-header">
+
+    <div>
+      <h1>Bookings</h1>
+      <p>Manage all customer bookings</p>
+    </div>
+
+    <div class="header-actions">
+
+      <select
+        class="filter-select"
+        [(ngModel)]="selectedStatus"
+        (change)="filterBookings()">
+
+        <option value="ALL">
+          All Status
+        </option>
+
+        <option value="PENDING">
+          Pending
+        </option>
+
+        <option value="CONFIRMED">
+          Confirmed
+        </option>
+
+        <option value="CANCELLED">
+          Cancelled
+        </option>
+
+      </select>
+
+      <button
+        class="refresh-btn"
+        (click)="loadBookings()"
+        [disabled]="isLoading">
+
+        Refresh
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       LOADING
+       ============================================================ -->
+
+  @if (isLoading) {
+
+    <div class="state-message">
+
+      <p>Loading bookings...</p>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       ERROR
+       ============================================================ -->
+
+  @if (!isLoading && errorMessage) {
+
+    <div class="state-message error">
+
+      <p>{{ errorMessage }}</p>
+
+      <button
+        class="retry-btn"
+        (click)="loadBookings()">
+
+        Retry
+
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       NO BOOKINGS
+       ============================================================ -->
+
+  @if (!isLoading && !errorMessage && bookings.length === 0) {
+
+    <div class="state-message">
+
+      <h3>No bookings found</h3>
+
+      <p>
+        There are currently no bookings in the system.
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       BOOKINGS TABLE
+       ============================================================ -->
+
+  @if (!isLoading && !errorMessage && bookings.length > 0) {
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Booking</th>
+            <th>User</th>
+            <th>Event</th>
+            <th>Venue</th>
+            <th>Seats</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          @for (booking of bookings; track booking.id) {
+
+            <tr>
+
+              <!-- BOOKING -->
+              <td>
+
+                <span class="booking-id">
+                  #{{ booking.id }}
+                </span>
+
+              </td>
+
+
+              <!-- USER -->
+              <td>
+
+                {{ booking.user?.username || '—' }}
+
+              </td>
+
+
+              <!-- EVENT -->
+              <td>
+
+                @if (booking.event) {
+
+                  <span class="event-title">
+                    {{ booking.event.title }}
+                  </span>
+
+                } @else {
+
+                  Event #{{ booking.event_id }}
+
+                }
+
+              </td>
+
+
+              <!-- VENUE -->
+              <td>
+
+                @if (booking.booking_seats.length > 0) {
+
+                  {{ booking.booking_seats[0].seat.venue.name }}
+
+                } @else {
+
+                  —
+
+                }
+
+              </td>
+
+
+              <!-- SEATS -->
+              <td>
+
+                <div class="seat-list">
+
+                  @for (
+                    bookingSeat of booking.booking_seats;
+                    track bookingSeat.id
+                  ) {
+
+                    <span class="seat">
+
+                      {{ bookingSeat.seat.row }}
+                      {{ bookingSeat.seat.number }}
+
+                    </span>
+
+                  }
+
+                </div>
+
+              </td>
+
+
+              <!-- TOTAL -->
+              <td>
+
+                ₹{{ booking.total_price }}
+
+              </td>
+
+
+              <!-- STATUS -->
+              <td>
+
+                <select
+                  class="status-select"
+                  [class.pending]="booking.status === 'PENDING'"
+                  [class.confirmed]="booking.status === 'CONFIRMED'"
+                  [class.cancelled]="booking.status === 'CANCELLED'"
+                  [value]="booking.status"
+                  (change)="changeStatus(
+                    booking,
+                    $any($event.target).value
+                  )">
+
+                  @if (booking.status === 'PENDING') {
+
+                    <option
+                      value="PENDING"
+                      selected>
+
+                      PENDING
+
+                    </option>
+
+                    <option value="CONFIRMED">
+                      CONFIRMED
+                    </option>
+
+                    <option value="CANCELLED">
+                      CANCELLED
+                    </option>
+
+                  }
+
+
+                  @if (booking.status === 'CONFIRMED') {
+
+                    <option
+                      value="CONFIRMED"
+                      selected>
+
+                      CONFIRMED
+
+                    </option>
+
+                    <option value="CANCELLED">
+                      CANCELLED
+                    </option>
+
+                  }
+
+
+                  @if (booking.status === 'CANCELLED') {
+
+                    <option
+                      value="CANCELLED"
+                      selected>
+
+                      CANCELLED
+
+                    </option>
+
+                  }
+
+                </select>
+
+              </td>
+
+
+              <!-- ACTION -->
+              <td>
+
+                <button
+                  class="view-btn"
+                  (click)="viewBooking(booking)">
+
+                  View
+
+                </button>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       BOOKING DETAILS MODAL
+       ============================================================ -->
+
+  @if (selectedBooking) {
+
+    <div
+      class="modal-backdrop"
+      (click)="closeBookingDetails()">
+
+      <div
+        class="booking-modal"
+        (click)="$event.stopPropagation()">
+
+
+        <!-- HEADER -->
+        <div class="modal-header">
+
+          <div>
+
+            <span class="modal-label">
+              BOOKING
+            </span>
+
+            <h2>
+              #{{ selectedBooking.id }}
+            </h2>
+
+          </div>
+
+          <button
+            class="close-btn"
+            (click)="closeBookingDetails()">
+
+            ×
+
+          </button>
+
+        </div>
+
+
+        <!-- STATUS -->
+        <div class="modal-status">
+
+          <span
+            class="status"
+            [class.pending]="selectedBooking.status === 'PENDING'"
+            [class.confirmed]="selectedBooking.status === 'CONFIRMED'"
+            [class.cancelled]="selectedBooking.status === 'CANCELLED'">
+
+            {{ selectedBooking.status }}
+
+          </span>
+
+        </div>
+
+
+        <!-- DETAILS -->
+        <div class="details-section">
+
+
+          <!-- EMAIL -->
+          <div class="detail-row">
+
+            <span>Email</span>
+
+            <strong>
+              {{ selectedBooking.user?.email || '—' }}
+            </strong>
+
+          </div>
+
+
+          <!-- PHONE -->
+          <div class="detail-row">
+
+            <span>Phone</span>
+
+            <strong>
+              {{ selectedBooking.user?.phone_no || '—' }}
+            </strong>
+
+          </div>
+
+
+          <!-- EVENT -->
+          <div class="detail-row">
+
+            <span>Event</span>
+
+            <strong>
+              {{ selectedBooking.event?.title || '—' }}
+            </strong>
+
+          </div>
+
+
+          <!-- VENUE -->
+          <div class="detail-row">
+
+            <span>Venue</span>
+
+            <strong>
+
+              {{
+                selectedBooking.booking_seats.length > 0
+                  ? selectedBooking.booking_seats[0].seat.venue.name
+                  : '—'
+              }}
+
+            </strong>
+
+          </div>
+
+
+          <!-- SEATS -->
+          <div class="detail-row">
+
+            <span>Seats</span>
+
+            <strong>
+
+              @for (
+                bookingSeat of selectedBooking.booking_seats;
+                track bookingSeat.id
+              ) {
+
+                {{ bookingSeat.seat.row }}{{ bookingSeat.seat.number }}
+
+                @if (!$last) {
+                  ,
+                }
+
+              }
+
+            </strong>
+
+          </div>
+
+
+          <!-- BOOKED AT -->
+          <div class="detail-row">
+
+            <span>Booked At</span>
+
+            <strong>
+
+              {{ selectedBooking.created_at | date:'dd MMM yyyy, hh:mm a' }}
+
+            </strong>
+
+          </div>
+
+
+          <!-- TOTAL -->
+          <div class="detail-row total-row">
+
+            <span>Total</span>
+
+            <strong>
+              ₹{{ selectedBooking.total_price }}
+            </strong>
+
+          </div>
+
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="modal-footer">
+
+          <button
+            class="close-modal-btn"
+            (click)="closeBookingDetails()">
+
+            Close
+
+          </button>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

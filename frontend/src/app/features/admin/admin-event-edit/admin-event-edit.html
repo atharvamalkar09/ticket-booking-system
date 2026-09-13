@@ -1,0 +1,361 @@
+<div class="edit-event-page">
+
+  @if (isLoading) {
+
+    <div class="loading-state">
+      Loading event...
+    </div>
+
+  }
+
+
+  @if (!isLoading && event) {
+
+    <div class="page-header">
+
+      <div>
+
+        <p class="page-label">
+          Admin / Events / Edit
+        </p>
+
+        <h1>
+          Edit Event
+        </h1>
+
+        <p>
+          Update "{{ event.title }}"
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        (click)="cancel()"
+        [disabled]="isSubmitting"
+      >
+        Back to Event
+      </button>
+
+    </div>
+
+
+    @if (errorMessage) {
+
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+
+    }
+
+
+    <form
+      [formGroup]="eventForm"
+      (ngSubmit)="updateEvent()"
+    >
+
+      <!-- EVENT INFORMATION -->
+
+      <section class="form-section">
+
+        <h2>Event Information</h2>
+
+
+        <div class="form-group">
+
+          <label for="title">
+            Event Title
+          </label>
+
+          <input
+            id="title"
+            type="text"
+            formControlName="title"
+            placeholder="Enter event title"
+          />
+
+          @if (
+            eventForm.controls.title.touched &&
+            eventForm.controls.title.invalid
+          ) {
+
+            <small>
+              Title must be between 2 and 150 characters.
+            </small>
+
+          }
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="description">
+            Description
+          </label>
+
+          <textarea
+            id="description"
+            rows="4"
+            formControlName="description"
+            placeholder="Enter event description"
+          ></textarea>
+
+          @if (
+            eventForm.controls.description.touched &&
+            eventForm.controls.description.invalid
+          ) {
+
+            <small>
+              Description cannot exceed 1000 characters.
+            </small>
+
+          }
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="category">
+            Category
+          </label>
+
+          <input
+            id="category"
+            type="text"
+            formControlName="category"
+            placeholder="Concert, Movie, Sports..."
+          />
+
+          @if (
+            eventForm.controls.category.touched &&
+            eventForm.controls.category.invalid
+          ) {
+
+            <small>
+              Category must be between 2 and 50 characters.
+            </small>
+
+          }
+
+        </div>
+
+      </section>
+
+
+      <!-- SCHEDULE -->
+
+      <section class="form-section">
+
+        <h2>Schedule & Pricing</h2>
+
+
+        <div class="form-row">
+
+          <div class="form-group">
+
+            <label for="start_time">
+              Start Date & Time
+            </label>
+
+            <input
+              id="start_time"
+              type="datetime-local"
+              formControlName="start_time"
+            />
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="end_time">
+              End Date & Time
+            </label>
+
+            <input
+              id="end_time"
+              type="datetime-local"
+              formControlName="end_time"
+            />
+
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="base_price">
+            Base Price (₹)
+          </label>
+
+          <input
+            id="base_price"
+            type="number"
+            min="0.01"
+            step="0.01"
+            formControlName="base_price"
+          />
+
+        </div>
+
+      </section>
+
+
+      <!-- VENUES -->
+
+      <section class="form-section">
+
+        <h2>Event Venues</h2>
+
+        <p class="section-description">
+          Select the venues where this event will take place.
+        </p>
+
+
+        @if (isLoadingVenues) {
+
+          <p>
+            Loading venues...
+          </p>
+
+        }
+
+
+        @if (
+          !isLoadingVenues &&
+          venues.length === 0
+        ) {
+
+          <p>
+            No venues are available.
+          </p>
+
+        }
+
+
+        @if (
+          !isLoadingVenues &&
+          venues.length > 0
+        ) {
+
+          <div class="venue-grid">
+
+            @for (
+              venue of venues;
+              track venue.id
+            ) {
+
+              <div
+                class="venue-card"
+                [class.selected]="
+                  isVenueSelected(venue.id)
+                "
+                (click)="toggleVenue(venue.id)"
+              >
+
+                <div class="venue-header">
+
+                  <div>
+
+                    <h3>
+                      {{ venue.name }}
+                    </h3>
+
+                    <p>
+                      {{ venue.location }}
+                    </p>
+
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    [checked]="
+                      isVenueSelected(venue.id)
+                    "
+                    (click)="$event.stopPropagation()"
+                    (change)="
+                      toggleVenue(venue.id)
+                    "
+                  />
+
+                </div>
+
+
+                <span>
+                  Capacity: {{ venue.capacity }}
+                </span>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+      </section>
+
+
+      <!-- ACTIONS -->
+
+      <div class="form-actions">
+
+        <button
+          type="button"
+          (click)="cancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+
+
+        <button
+          type="submit"
+          [disabled]="
+            isSubmitting ||
+            isLoadingVenues
+          "
+        >
+
+          @if (isSubmitting) {
+            Updating...
+          } @else {
+            Update Event
+          }
+
+        </button>
+
+      </div>
+
+    </form>
+
+  }
+
+
+  @if (!isLoading && !event) {
+
+    <div class="error-state">
+
+      <h2>
+        Event Not Found
+      </h2>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        (click)="cancel()"
+      >
+        Back to Events
+      </button>
+
+    </div>
+
+  }
+
+</div>

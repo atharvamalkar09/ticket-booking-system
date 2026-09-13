@@ -1,0 +1,75 @@
+@if (isOpen) {
+  <div
+    class="dialog-backdrop"
+    (click)="closeOnBackdrop($event)"
+  >
+    <div
+      class="dialog"
+      [class.dialog--success]="type === 'success'"
+      [class.dialog--error]="type === 'error'"
+      [class.dialog--warning]="type === 'warning'"
+      [class.dialog--info]="type === 'info'"
+      [class.dialog--confirm]="type === 'confirm'"
+      role="dialog"
+      aria-modal="true"
+    >
+
+      <div class="dialog__icon">
+
+        @if (type === 'success') {
+          <span>✓</span>
+        }
+
+        @if (type === 'error') {
+          <span>×</span>
+        }
+
+        @if (type === 'warning' || type === 'confirm') {
+          <span>!</span>
+        }
+
+        @if (type === 'info') {
+          <span>i</span>
+        }
+
+      </div>
+
+      <div class="dialog__content">
+
+        @if (title) {
+          <h2 class="dialog__title">
+            {{ title }}
+          </h2>
+        }
+
+        <p class="dialog__message">
+          {{ message }}
+        </p>
+
+      </div>
+
+      <div class="dialog__actions">
+
+        @if (showCancel) {
+          <button
+            type="button"
+            class="dialog__button dialog__button--cancel"
+            (click)="onCancel()"
+          >
+            {{ cancelText }}
+          </button>
+        }
+
+        <button
+          type="button"
+          class="dialog__button dialog__button--confirm"
+          (click)="onConfirm()"
+        >
+          {{ confirmText }}
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+}

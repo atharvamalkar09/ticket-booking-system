@@ -1,0 +1,98 @@
+<app-navbar></app-navbar>
+
+<div class="container venue-selection-page">
+  <h2>Select venue</h2>
+
+  @if (isLoading) {
+    <div class="event-grid">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="card venue-card">
+          <div
+            class="skeleton"
+            style="height: 20px; width: 70%; margin-bottom: 12px;"
+          ></div>
+
+          <div
+            class="skeleton"
+            style="height: 14px; width: 100%; margin-bottom: 8px;"
+          ></div>
+
+          <div
+            class="skeleton"
+            style="height: 14px; width: 50%;"
+          ></div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (!isLoading && errorMessage) {
+    <div class="alert alert--danger venue-selection-page__alert">
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn--secondary"
+      (click)="loadEvent()"
+    >
+      Try again
+    </button>
+  }
+
+  @if (!isLoading && !errorMessage && event) {
+    <div class="venue-selection-page__intro">
+      <h3>{{ event.title }}</h3>
+
+      <p class="text-secondary">
+        Choose a venue to book your tickets.
+      </p>
+    </div>
+
+    @if (event.venues && event.venues.length > 0) {
+      <div class="event-grid">
+        @for (venue of event.venues; track venue.id) {
+          <div class="card venue-card">
+            <h3>{{ venue.name }}</h3>
+
+            <p class="text-secondary venue-card__location">
+              {{ venue.location }}
+            </p>
+
+            @if (venue.capacity) {
+              <p class="venue-card__capacity">
+                <span class="text-secondary">Capacity</span>
+                {{ venue.capacity }}
+              </p>
+            }
+
+            @if (venue.description) {
+              <p class="venue-card__desc">
+                {{ venue.description }}
+              </p>
+            }
+
+            <button
+              type="button"
+              class="btn btn--primary btn--full"
+              (click)="selectVenue(venue.id)"
+            >
+              Book tickets
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <div class="empty-state__title">
+          No venues available
+        </div>
+
+        <p class="empty-state__desc">
+          This event doesn't have any venues set up yet.
+        </p>
+      </div>
+    }
+  }
+</div>
+

@@ -1,0 +1,329 @@
+<div class="event-details-page">
+
+  @if (isLoading) {
+
+    <div class="loading-state">
+      Loading event details...
+    </div>
+
+  }
+
+
+  @if (!isLoading && errorMessage) {
+
+    <div class="error-state">
+
+      <h3>Unable to Load Event</h3>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        (click)="goBack()"
+      >
+        Back to Events
+      </button>
+
+    </div>
+
+  }
+
+
+  @if (!isLoading && event) {
+
+    <!-- HEADER -->
+
+    <div class="page-header">
+
+      <div>
+
+        <p class="page-label">
+          Event Details
+        </p>
+
+        <h1>
+          {{ event.title }}
+        </h1>
+
+        <p class="category">
+          {{ event.category }}
+        </p>
+
+      </div>
+
+
+      <div class="header-actions">
+
+        <button
+          type="button"
+          (click)="goBack()"
+        >
+          Back to Events
+        </button>
+
+        <button
+          type="button"
+          (click)="editEvent()"
+        >
+          Edit Event
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- EVENT INFORMATION -->
+
+    <section class="details-section">
+
+      <h2>Event Information</h2>
+
+
+      <div class="details-grid">
+
+        <div class="detail-item">
+
+          <span class="detail-label">
+            Event ID
+          </span>
+
+          <strong>
+            #{{ event.id }}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <span class="detail-label">
+            Category
+          </span>
+
+          <strong>
+            {{ event.category }}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <span class="detail-label">
+            Base Price
+          </span>
+
+          <strong>
+            {{ event.base_price | currency:'INR':'symbol':'1.2-2' }}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-item">
+
+          <span class="detail-label">
+            Number of Venues
+          </span>
+
+          <strong>
+            {{ event.venues.length }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- DESCRIPTION -->
+
+    <section class="details-section">
+
+      <h2>Description</h2>
+
+      @if (event.description) {
+
+        <p class="description">
+          {{ event.description }}
+        </p>
+
+      } @else {
+
+        <p class="muted">
+          No description provided.
+        </p>
+
+      }
+
+    </section>
+
+
+    <!-- SCHEDULE -->
+
+    <section class="details-section">
+
+      <h2>Schedule</h2>
+
+
+      <div class="schedule-grid">
+
+        <div class="schedule-item">
+
+          <span class="detail-label">
+            Starts
+          </span>
+
+          <strong>
+            {{ event.start_time | date:'EEEE, d MMMM y, h:mm a' }}
+          </strong>
+
+        </div>
+
+
+        <div class="schedule-item">
+
+          <span class="detail-label">
+            Ends
+          </span>
+
+          <strong>
+            {{ event.end_time | date:'EEEE, d MMMM y, h:mm a' }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- VENUES -->
+
+    <section class="details-section">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>Venues</h2>
+
+          <p>
+            Venues assigned to this event.
+          </p>
+
+        </div>
+
+        <span class="venue-count">
+          {{ event.venues.length }}
+        </span>
+
+      </div>
+
+
+      @if (event.venues.length > 0) {
+
+        <div class="venue-grid">
+
+          @for (
+            venue of event.venues;
+            track venue.id
+          ) {
+
+            <div class="venue-card">
+
+              <div class="venue-card-header">
+
+                <h3>
+                  {{ venue.name }}
+                </h3>
+
+                <span>
+                  #{{ venue.id }}
+                </span>
+
+              </div>
+
+
+              <div class="venue-detail">
+
+                <span class="detail-label">
+                  Location
+                </span>
+
+                <strong>
+                  {{ venue.location }}
+                </strong>
+
+              </div>
+
+
+              @if (venue.capacity) {
+
+                <div class="venue-detail">
+
+                  <span class="detail-label">
+                    Capacity
+                  </span>
+
+                  <strong>
+                    {{ venue.capacity }}
+                  </strong>
+
+                </div>
+
+              }
+
+
+              @if (venue.description) {
+
+                <p class="venue-description">
+                  {{ venue.description }}
+                </p>
+
+              }
+
+            </div>
+
+          }
+
+        </div>
+
+      } @else {
+
+        <p class="muted">
+          No venues assigned to this event.
+        </p>
+
+      }
+
+    </section>
+
+
+    <!-- BOTTOM ACTIONS -->
+
+    <div class="bottom-actions">
+
+      <button
+        type="button"
+        (click)="goBack()"
+      >
+        Back to Events
+      </button>
+
+      <button
+        type="button"
+        (click)="editEvent()"
+      >
+        Edit Event
+      </button>
+
+    </div>
+
+  }
+
+</div>

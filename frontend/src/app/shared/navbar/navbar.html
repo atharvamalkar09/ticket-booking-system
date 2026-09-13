@@ -1,0 +1,192 @@
+<nav class="navbar">
+  <div class="navbar__container">
+    <a
+      routerLink="/"
+      class="navbar__brand"
+      (click)="closeMenu()"
+    >
+      <span class="navbar__brand-mark">T</span>
+
+      <span class="navbar__brand-text">
+        TicketFlow
+      </span>
+    </a>
+
+    <button
+      type="button"
+      class="navbar__menu-toggle"
+      (click)="toggleMenu()"
+      aria-label="Toggle navigation"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div
+      class="navbar__links"
+      [class.navbar__links--open]="isMenuOpen"
+    >
+      @if (!isLoggedIn()) {
+        <a
+          routerLink="/events"
+          routerLinkActive="navbar__link--active"
+          class="navbar__link"
+          (click)="closeMenu()"
+        >
+          Events
+        </a>
+
+        <a
+          routerLink="/login"
+          routerLinkActive="navbar__link--active"
+          class="navbar__link"
+          (click)="closeMenu()"
+        >
+          Sign In
+        </a>
+
+        <a
+          routerLink="/register"
+          routerLinkActive="navbar__signup"
+          class="navbar__signup"
+          (click)="closeMenu()"
+        >
+          Sign Up
+        </a>
+      }
+
+      @if (isLoggedIn() && !isAdmin()) {
+        <a
+          routerLink="/events"
+          routerLinkActive="navbar__link--active"
+          class="navbar__link"
+          (click)="closeMenu()"
+        >
+          Events
+        </a>
+
+        <a
+          routerLink="/bookings"
+          routerLinkActive="navbar__link--active"
+          class="navbar__link"
+          (click)="closeMenu()"
+        >
+          My Bookings
+        </a>
+
+        <a
+          routerLink="/profile"
+          routerLinkActive="navbar__account--active"
+          class="navbar__account-link"
+          (click)="closeMenu()"
+        >
+          <span class="navbar__account-icon">
+            ◉
+          </span>
+
+          <span>Account</span>
+        </a>
+
+        <button
+          type="button"
+          class="navbar__logout"
+          (click)="onLogout()"
+        >
+          Logout
+        </button>
+      }
+
+      @if (isLoggedIn() && isAdmin()) {
+        <a
+          routerLink="/admin/events"
+          routerLinkActive="navbar__link--active"
+          class="navbar__link"
+          (click)="closeMenu()"
+        >
+          Manage Events
+        </a>
+
+        <a
+          routerLink="/admin/venues"
+          routerLinkActive="navbar__link--active"
+          class="navbar__link"
+          (click)="closeMenu()"
+        >
+          Manage Venues
+        </a>
+
+        <a
+          routerLink="/profile"
+          routerLinkActive="navbar__account--active"
+          class="navbar__account-link"
+          (click)="closeMenu()"
+        >
+          <span class="navbar__account-icon">
+            ◉
+          </span>
+
+          <span>Account</span>
+        </a>
+
+        <button
+          type="button"
+          class="navbar__logout"
+          (click)="onLogout()"
+        >
+          Logout
+        </button>
+      }
+    </div>
+  </div>
+</nav>
+
+@if (showLogoutDialog) {
+  <div
+    class="logout-dialog-backdrop"
+    (click)="closeLogoutDialogOnBackdrop($event)"
+  >
+    <div
+      class="logout-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="logout-dialog-title"
+    >
+      <div class="logout-dialog__icon">
+        !
+      </div>
+
+      <div class="logout-dialog__content">
+        <h2
+          id="logout-dialog-title"
+          class="logout-dialog__title"
+        >
+          Logout
+        </h2>
+
+        <p class="logout-dialog__message">
+          Are you sure you want to logout?
+        </p>
+      </div>
+
+      <div class="logout-dialog__actions">
+        <button
+          type="button"
+          class="logout-dialog__button logout-dialog__button--cancel"
+          (click)="cancelLogout()"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="logout-dialog__button logout-dialog__button--confirm"
+          (click)="confirmLogout()"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+}
+

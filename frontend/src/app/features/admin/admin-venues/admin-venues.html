@@ -1,0 +1,209 @@
+<div class="admin-venues-page">
+
+  <!-- ============================================================
+       PAGE HEADER
+       ============================================================ -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Venues</h1>
+
+      <p>
+        Manage all venues in the system.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      (click)="createVenue()"
+    >
+      + Create Venue
+    </button>
+
+  </div>
+
+
+  <!-- ============================================================
+       LOADING STATE
+       ============================================================ -->
+
+  @if (isLoading) {
+
+    <div class="loading-state">
+
+      Loading venues...
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       EMPTY STATE
+       ============================================================ -->
+
+  @if (
+    !isLoading &&
+    !errorMessage &&
+    venues.length === 0
+  ) {
+
+    <div class="empty-state">
+
+      <h3>
+        No Venues Found
+      </h3>
+
+      <p>
+        There are currently no venues in the system.
+      </p>
+
+      <button
+        type="button"
+        (click)="createVenue()"
+      >
+
+        Create Your First Venue
+
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       VENUES TABLE
+       ============================================================ -->
+
+  @if (
+    !isLoading &&
+    !errorMessage &&
+    venues.length > 0
+  ) {
+
+    <div class="venues-container">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>ID</th>
+            <th>Venue</th>
+            <th>Location</th>
+            <th>Capacity</th>
+            <th>Actions</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          @for (
+            venue of venues;
+            track venue.id
+          ) {
+
+            <tr
+              class="venue-row"
+              (click)="viewVenue(venue.id)"
+            >
+
+              <td>
+
+                #{{ venue.id }}
+
+              </td>
+
+
+              <td>
+
+                <strong>
+                  {{ venue.name }}
+                </strong>
+
+              </td>
+
+
+              <td>
+
+                {{ venue.location }}
+
+              </td>
+
+
+              <td>
+
+                {{ venue.capacity }}
+
+              </td>
+
+
+              <td>
+
+                <div
+                  class="action-buttons"
+                  (click)="$event.stopPropagation()"
+                >
+
+                  <button
+                    type="button"
+                    (click)="editVenue(venue.id)"
+                  >
+
+                    Edit
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    (click)="deleteVenue(venue.id)"
+                    [disabled]="isDeleting"
+                  >
+
+                    Delete
+
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       SHARED DIALOG (confirm / success / error)
+       ============================================================ -->
+
+  <app-dialog
+    [isOpen]="dialogService.isOpen()"
+    [title]="dialogService.config().title"
+    [message]="dialogService.config().message"
+    [type]="dialogService.config().type!"
+    [confirmText]="dialogService.config().confirmText!"
+    [cancelText]="dialogService.config().cancelText!"
+    [showCancel]="dialogService.config().showCancel!"
+    (confirmed)="dialogService.confirmAction()"
+    (cancelled)="dialogService.cancelAction()"
+  />
+
+</div>

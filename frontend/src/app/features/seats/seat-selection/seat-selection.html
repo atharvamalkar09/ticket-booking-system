@@ -1,0 +1,154 @@
+<app-navbar></app-navbar>
+
+<div class="container seat-page">
+  <button
+    type="button"
+    class="btn btn--ghost seat-page__back"
+    (click)="goBack()"
+  >
+    ← Back to event
+  </button>
+
+  <h2>Select seats</h2>
+
+  @if (event) {
+    <div class="seat-page__event-meta">
+      <span>{{ event.title }}</span>
+      <span class="text-secondary">·</span>
+      <span class="text-secondary">{{ event.category }}</span>
+      <span class="text-secondary">·</span>
+      <span class="text-secondary">
+        {{ event.start_time | date:'medium' }}
+      </span>
+
+      @if (venue) {
+        <span class="text-secondary">·</span>
+        <span class="text-secondary">
+          {{ venue.name }}
+        </span>
+      }
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="card seat-page__loading">
+      <div
+        class="skeleton"
+        style="height: 200px; width: 100%;"
+      ></div>
+    </div>
+  }
+
+  @if (!isLoading && errorMessage) {
+    <div class="alert alert--danger">
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+
+  @if (!isLoading && event) {
+    <div class="seat-page__layout">
+      <div class="card seat-page__map-card">
+        <div class="seat-page__screen">
+          <span>Screen</span>
+        </div>
+
+        <div class="seat-legend seat-legend--top">
+          <div class="seat-legend__item">
+            <span
+              class="seat-legend__swatch seat-legend__swatch--available"
+            ></span>
+            <span>Available</span>
+          </div>
+
+          <div class="seat-legend__item">
+            <span
+              class="seat-legend__swatch seat-legend__swatch--selected"
+            ></span>
+            <span>Selected</span>
+          </div>
+
+          <div class="seat-legend__item">
+            <span
+              class="seat-legend__swatch seat-legend__swatch--booked"
+            ></span>
+            <span>Booked</span>
+          </div>
+        </div>
+
+        @if (seats.length > 0) {
+          <div class="seat-grid">
+            @for (seat of seats; track seat.id) {
+              <button
+                type="button"
+                class="seat-btn"
+                [class.seat-btn--selected]="isSelected(seat)"
+                [class.seat-btn--booked]="isBooked(seat)"
+                [disabled]="isBooked(seat)"
+                (click)="toggleSeat(seat)"
+              >
+                {{ seat.label }}
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <div class="empty-state__title">
+              No seats available
+            </div>
+
+            <p class="empty-state__desc">
+              This venue has no seats configured yet.
+            </p>
+          </div>
+        }
+      </div>
+
+      <div class="card booking-summary seat-page__summary">
+        <h3>Booking summary</h3>
+
+        @if (selectedSeats.length > 0) {
+          <div class="seat-page__chips">
+            @for (seat of selectedSeats; track seat.id) {
+              <span class="badge badge--accent">
+                {{ seat.label }}
+              </span>
+            }
+          </div>
+
+          <div class="booking-summary__row">
+            <span>Seats</span>
+            <span>{{ selectedSeats.length }}</span>
+          </div>
+
+          <div class="booking-summary__row">
+            <span>Price per seat</span>
+            <span class="mono">
+              ₹{{ event.base_price }}
+            </span>
+          </div>
+
+          <div class="booking-summary__row booking-summary__row--total">
+            <span>Total</span>
+            <span class="mono">
+              ₹{{ totalPrice }}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn--primary btn--full seat-page__continue"
+            (click)="continueToBooking()"
+            [disabled]="selectedSeats.length === 0"
+          >
+            Continue to booking
+          </button>
+        } @else {
+          <p class="text-secondary">
+            Select at least one seat to continue.
+          </p>
+        }
+      </div>
+    </div>
+  }
+</div>
+

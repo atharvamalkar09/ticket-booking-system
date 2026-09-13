@@ -1,0 +1,136 @@
+<app-navbar></app-navbar>
+
+<div class="container bookings-page">
+
+  <div class="bookings-page__header">
+    <div>
+      <h2>My bookings</h2>
+      <p class="text-secondary">View and manage your tickets.</p>
+    </div>
+
+    <button type="button" class="btn btn--secondary" (click)="goToEvents()">
+      Browse events
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <div class="bookings-page__list">
+      @for (i of [1,2]; track i) {
+        <div class="card bookings-page__skeleton-card">
+          <div class="skeleton" style="height: 20px; width: 40%; margin-bottom: 12px;"></div>
+          <div class="skeleton" style="height: 14px; width: 90%; margin-bottom: 8px;"></div>
+          <div class="skeleton" style="height: 14px; width: 60%;"></div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (!isLoading && errorMessage) {
+    <div class="alert alert--danger bookings-page__alert">
+      <span>{{ errorMessage }}</span>
+    </div>
+    <button type="button" class="btn btn--secondary" (click)="loadBookings()">
+      Try again
+    </button>
+  }
+
+  @if (!isLoading && !errorMessage && bookings.length === 0) {
+    <div class="empty-state">
+      <div class="empty-state__title">No bookings yet</div>
+      <p class="empty-state__desc">You haven't booked any tickets yet.</p>
+      <button type="button" class="btn btn--primary" (click)="goToEvents()">
+        Browse events
+      </button>
+    </div>
+  }
+
+  @if (!isLoading && !errorMessage && bookings.length > 0) {
+
+    <div class="bookings-page__list">
+
+      @for (booking of bookings; track booking.id) {
+
+        <div class="card booking-card">
+
+          <div class="booking-card__header">
+            <div>
+              <h3>{{ booking.event?.title || 'Event' }}</h3>
+              <span class="text-secondary mono">Booking #{{ booking.id }}</span>
+            </div>
+
+            <span
+              class="badge"
+              [class.badge--warning]="booking.status === 'PENDING'"
+              [class.badge--success]="booking.status === 'CONFIRMED'"
+              [class.badge--danger]="booking.status === 'CANCELLED'"
+            >
+              {{ booking.status }}
+            </span>
+          </div>
+
+          <div class="booking-card__details">
+
+            <div class="booking-card__item">
+              <span class="text-secondary">Event date</span>
+              <strong>
+                @if (booking.event?.start_time) {
+                  {{ booking.event?.start_time | date:'medium' }}
+                } @else {
+                  N/A
+                }
+              </strong>
+            </div>
+
+            <div class="booking-card__item">
+              <span class="text-secondary">Venue</span>
+              @if (booking.booking_seats.length > 0 && booking.booking_seats[0].seat.venue) {
+                <strong>{{ booking.booking_seats[0].seat.venue.name }}</strong>
+                <span class="text-secondary">{{ booking.booking_seats[0].seat.venue.location }}</span>
+              } @else {
+                <span class="text-secondary">Venue information unavailable</span>
+              }
+            </div>
+
+            <div class="booking-card__item">
+              <span class="text-secondary">Tickets</span>
+              <strong>{{ getTicketCount(booking) }}</strong>
+            </div>
+
+            <div class="booking-card__item">
+              <span class="text-secondary">Total</span>
+              <strong class="mono">₹{{ booking.total_price }}</strong>
+            </div>
+
+            <div class="booking-card__item">
+              <span class="text-secondary">Booked on</span>
+              <strong>{{ booking.created_at | date:'medium' }}</strong>
+            </div>
+
+            <div class="booking-card__item booking-card__item--seats">
+              <span class="text-secondary">Seats</span>
+              <div class="booking-card__seats">
+                @for (bookingSeat of booking.booking_seats; track bookingSeat.id) {
+                  <span class="badge badge--neutral mono">
+                    {{ bookingSeat.seat.row }}{{ bookingSeat.seat.number }}
+                  </span>
+                }
+              </div>
+            </div>
+
+          </div>
+
+          <!-- <div class="booking-card__footer">
+            <button type="button" class="btn btn--secondary btn--sm" (click)="viewBooking(booking.id)">
+              View booking
+            </button>
+          </div> -->
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>

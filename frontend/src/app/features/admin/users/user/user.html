@@ -1,0 +1,670 @@
+<div class="admin-users">
+
+  <!-- ============================================================
+       PAGE HEADER
+       ============================================================ -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Users</h1>
+
+      <p>
+        Manage all registered users
+      </p>
+
+    </div>
+
+    <div class="header-actions">
+
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search users..."
+        [(ngModel)]="searchTerm"
+      >
+
+      <select
+        class="filter-select"
+        [(ngModel)]="selectedStatus"
+      >
+
+        <option value="ALL">
+          All Status
+        </option>
+
+        <option value="ACTIVE">
+          Active
+        </option>
+
+        <option value="INACTIVE">
+          Inactive
+        </option>
+
+      </select>
+
+      <button
+        class="refresh-btn"
+        (click)="loadUsers()"
+        [disabled]="isLoading || isUpdatingStatus"
+      >
+
+        Refresh
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       LOADING STATE
+       ============================================================ -->
+
+  @if (isLoading) {
+
+    <div class="state-message">
+
+      <p>
+        Loading users...
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       EMPTY STATE
+       ============================================================ -->
+
+  @if (
+    !isLoading &&
+    !errorMessage &&
+    filteredUsers.length === 0
+  ) {
+
+    <div class="state-message">
+
+      <h3>
+        No users found
+      </h3>
+
+      <p>
+        No users match your search or filter.
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       USERS TABLE
+       ============================================================ -->
+
+  @if (
+    !isLoading &&
+    !errorMessage &&
+    filteredUsers.length > 0
+  ) {
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>User</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>City</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Action</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          @for (
+            user of filteredUsers;
+            track user.id
+          ) {
+
+            <tr>
+
+              <td>
+
+                <span class="username">
+                  {{ user.username }}
+                </span>
+
+              </td>
+
+              <td>
+                {{ user.email }}
+              </td>
+
+              <td>
+                {{ user.phone_no }}
+              </td>
+
+              <td>
+                {{ user.city }}
+              </td>
+
+              <td>
+
+                <span
+                  class="role"
+                  [class.admin]="user.role === 'ADMIN'"
+                >
+
+                  {{ user.role }}
+
+                </span>
+
+              </td>
+
+              <td>
+
+                <span
+                  class="status"
+                  [class.active]="user.is_active"
+                  [class.inactive]="!user.is_active"
+                >
+
+                  {{ user.is_active ? 'ACTIVE' : 'INACTIVE' }}
+
+                </span>
+
+              </td>
+
+              <td>
+
+                <button
+                  class="view-btn"
+                  (click)="viewUser(user)"
+                >
+
+                  View
+
+                </button>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       USER DETAILS MODAL
+       ============================================================ -->
+
+  @if (selectedUser) {
+
+    <div
+      class="modal-backdrop"
+      (click)="closeUserDetails()"
+    >
+
+      <div
+        class="user-modal"
+        (click)="$event.stopPropagation()"
+      >
+
+        <!-- Modal Header -->
+
+        <div class="modal-header">
+
+          <div>
+
+            <span class="modal-label">
+              USER
+            </span>
+
+            <h2>
+              {{ selectedUser.username }}
+            </h2>
+
+          </div>
+
+          <button
+            class="close-btn"
+            (click)="closeUserDetails()"
+            [disabled]="isUpdatingStatus"
+          >
+
+            ×
+
+          </button>
+
+        </div>
+
+
+        <!-- Current Status -->
+
+        <div class="modal-status">
+
+          <span
+            class="status"
+            [class.active]="selectedUser.is_active"
+            [class.inactive]="!selectedUser.is_active"
+          >
+
+            {{ selectedUser.is_active ? 'ACTIVE' : 'INACTIVE' }}
+
+          </span>
+
+        </div>
+
+
+        <!-- User Details -->
+
+        <div class="details-section">
+
+          <div class="detail-row">
+
+            <span>
+              Email
+            </span>
+
+            <strong>
+              {{ selectedUser.email }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Phone
+            </span>
+
+            <strong>
+              {{ selectedUser.phone_no }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              City
+            </span>
+
+            <strong>
+              {{ selectedUser.city }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Role
+            </span>
+
+            <strong>
+              {{ selectedUser.role }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail-row">
+
+            <span>
+              Joined
+            </span>
+
+            <strong>
+              {{ selectedUser.created_at | date:'dd MMM yyyy' }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- Modal Footer -->
+
+        <div class="modal-footer">
+
+          @if (
+            selectedUser.is_active &&
+            isCurrentUser(selectedUser)
+          ) {
+
+            <div class="self-protection-message">
+
+              You cannot deactivate your own account.
+
+            </div>
+
+          }
+
+
+          <button
+            class="status-btn"
+            [class.activate]="!selectedUser.is_active"
+            [class.deactivate]="selectedUser.is_active"
+            [disabled]="
+              isUpdatingStatus ||
+              (
+                selectedUser.is_active &&
+                isCurrentUser(selectedUser)
+              )
+            "
+            (click)="changeUserStatus(selectedUser)"
+          >
+
+            @if (
+              isUpdatingStatus &&
+              statusUserId === selectedUser.id
+            ) {
+
+              <span class="button-spinner"></span>
+
+              Updating...
+
+            } @else {
+
+              {{ selectedUser.is_active
+                ? 'Deactivate'
+                : 'Activate'
+              }}
+
+            }
+
+          </button>
+
+
+          <button
+            class="close-modal-btn"
+            (click)="closeUserDetails()"
+            [disabled]="isUpdatingStatus"
+          >
+
+            Close
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       STATUS CONFIRMATION MODAL
+       ============================================================ -->
+
+  @if (
+    showStatusConfirmation &&
+    userPendingStatusChange
+  ) {
+
+    <div
+      class="modal-backdrop confirmation-backdrop"
+    >
+
+      <div
+        class="confirmation-modal"
+        (click)="$event.stopPropagation()"
+      >
+
+        <div class="confirmation-icon">
+
+          {{ pendingStatus ? '✓' : '!' }}
+
+        </div>
+
+
+        <div class="confirmation-content">
+
+          <h3>
+
+            {{ pendingStatus
+              ? 'Activate User?'
+              : 'Deactivate User?'
+            }}
+
+          </h3>
+
+
+          <p>
+
+            Are you sure you want to
+
+            <strong>
+              {{ pendingStatus
+                ? 'activate'
+                : 'deactivate'
+              }}
+            </strong>
+
+            <strong>
+              {{ userPendingStatusChange.username }}
+            </strong>?
+
+          </p>
+
+
+          @if (!pendingStatus) {
+
+            <p class="warning-text">
+
+              This user will no longer be able to
+              access protected parts of the application.
+
+            </p>
+
+          }
+
+        </div>
+
+
+        <div class="confirmation-actions">
+
+          <button
+            class="cancel-confirm-btn"
+            (click)="cancelStatusChange()"
+            [disabled]="isUpdatingStatus"
+          >
+
+            Cancel
+
+          </button>
+
+
+          <button
+            class="confirm-status-btn"
+            [class.confirm-activate]="pendingStatus"
+            [class.confirm-deactivate]="!pendingStatus"
+            (click)="confirmStatusChange()"
+            [disabled]="isUpdatingStatus"
+          >
+
+            @if (isUpdatingStatus) {
+
+              <span class="button-spinner"></span>
+
+              Updating...
+
+            } @else {
+
+              {{ pendingStatus
+                ? 'Activate'
+                : 'Deactivate'
+              }}
+
+            }
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       ERROR DIALOG
+       ============================================================ -->
+
+  @if (showErrorDialog) {
+
+    <div
+      class="admin-dialog-backdrop"
+      (click)="closeErrorDialogOnBackdrop($event)"
+    >
+
+      <div
+        class="admin-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="admin-error-dialog-title"
+      >
+
+        <div class="admin-dialog__icon admin-dialog__icon--error">
+
+          !
+
+        </div>
+
+
+        <div class="admin-dialog__content">
+
+          <h2
+            id="admin-error-dialog-title"
+            class="admin-dialog__title"
+          >
+
+            Action failed
+
+          </h2>
+
+
+          <p class="admin-dialog__message">
+
+            {{ errorMessage || statusErrorMessage }}
+
+          </p>
+
+        </div>
+
+
+        <div class="admin-dialog__actions">
+
+          <button
+            type="button"
+            class="admin-dialog__button admin-dialog__button--error"
+            (click)="closeErrorDialog()"
+          >
+
+            OK
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       SUCCESS DIALOG
+       ============================================================ -->
+
+  @if (showSuccessDialog) {
+
+    <div
+      class="admin-dialog-backdrop"
+      (click)="closeSuccessDialogOnBackdrop($event)"
+    >
+
+      <div
+        class="admin-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="admin-success-dialog-title"
+      >
+
+        <div class="admin-dialog__icon admin-dialog__icon--success">
+
+          ✓
+
+        </div>
+
+
+        <div class="admin-dialog__content">
+
+          <h2
+            id="admin-success-dialog-title"
+            class="admin-dialog__title"
+          >
+
+            Status updated
+
+          </h2>
+
+
+          <p class="admin-dialog__message">
+
+            {{ statusSuccessMessage }}
+
+          </p>
+
+        </div>
+
+
+        <div class="admin-dialog__actions">
+
+          <button
+            type="button"
+            class="admin-dialog__button admin-dialog__button--success"
+            (click)="closeSuccessDialog()"
+          >
+
+            OK
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>
