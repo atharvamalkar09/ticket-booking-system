@@ -28,6 +28,7 @@ The system uses **Angular** for the client application, **FastAPI** for the REST
 * Automated backend tests
 * Dedicated concurrency/load-testing scripts
 * Swagger/OpenAPI documentation through FastAPI
+* Deployed and validated on Azure
 
 ---
 
@@ -100,7 +101,7 @@ Create booking
        ▼
 Acquire Redis seat locks
        │
-       ├── Lock unavailable ──► Reject request
+       ├── Lock unavailable ──► Reject request (409)
        │
        ▼
 Create PENDING booking
@@ -349,11 +350,11 @@ Seat identity is scoped by the physical venue.
 Therefore, the same label can legitimately exist in different venues:
 
 ```text
-Venue A → A1
-Venue B → A1
+Venue A → Seat A1
+Venue B → Seat A1
 ```
 
-These are different seats with different database identities.
+These are different physical seats with different database identities.
 
 This prevents a booking in one venue from incorrectly affecting an identically labelled seat in another venue.
 
@@ -377,6 +378,7 @@ This prevents a booking in one venue from incorrectly affecting an identically l
 | Containerization    | Docker                   |
 | Testing             | Pytest                   |
 | Concurrency Testing | Python load-test scripts |
+| Cloud               | Azure                    |
 
 ---
 
@@ -710,6 +712,93 @@ Administrative operations require appropriate authorization.
 
 ---
 
+## Azure Deployment
+
+The application was deployed to a temporary cloud validation environment to verify the system end-to-end outside the local Docker development environment.
+
+### Azure Resources
+
+- Azure Static Web Apps for the Angular frontend
+- Azure Container Apps for the FastAPI backend
+- Azure Database for PostgreSQL Flexible Server for transactional persistence
+- Upstash Redis for distributed seat locking
+- Azure Container Registry for Docker image storage
+
+### Deployment Validation
+
+- FastAPI health endpoint returned `{"status":"ok"}`.
+- Container App revision `ticket-booking-api--0000007` was running successfully.
+- Azure PostgreSQL reached Alembic head `3cf201acbc29`.
+- Redis connectivity from inside the running Container App returned `True`.
+- Angular frontend successfully communicated with the deployed API.
+
+### Public Demo
+
+Frontend: https://mango-wave-02a8ef100.2.azurestaticapps.net
+
+API: https://ticket-booking-api.kindbay-f9b35095.centralindia.azurecontainerapps.io
+
+The cloud environment is intended for temporary portfolio demonstration and validation rather than production-scale operation.
+
+---
+
+## Azure Concurrency Validation
+
+The deployed Azure API was tested with 100 concurrent booking requests targeting the same event and seat.
+
+| Metric | Result |
+|---|---:|
+| Concurrent requests | 100 |
+| Successful bookings | 1 |
+| Conflicts | 99 |
+| Other errors | 0 |
+| Total time | 5.381 sec |
+| Throughput | 18.58 req/s |
+| Average latency | 2063.12 ms |
+| P50 latency | 1456.76 ms |
+| P95 latency | 5020.83 ms |
+| P99 latency | 5337.11 ms |
+
+The result matched the expected concurrency behavior: one request successfully booked the seat while the remaining 99 requests were rejected as conflicts.
+
+---
+
+## Deployment Troubleshooting and Failure Evidence
+
+The Azure deployment required several debugging steps before the final environment was validated.
+
+### PostgreSQL Firewall Timeout
+
+The API initially could not connect to Azure PostgreSQL because the required client IP was not allowed by the PostgreSQL firewall. The firewall configuration was corrected and connectivity was revalidated.
+
+### Alembic Migration Issues
+
+The Azure database initially lacked the required bookings schema. Migration inconsistencies were encountered and repaired, including enum/index conflicts and a duplicate price column definition.
+
+### Container Apps to PostgreSQL Connectivity
+
+Initial connectivity attempts between Azure Container Apps and PostgreSQL resulted in connection timeouts. Azure networking, firewall rules, database configuration, and application connection settings were checked before connectivity was successfully established.
+
+### Frontend API Configuration
+
+The Angular production configuration initially contained incorrectly quoted API URL template expressions in multiple services. These were corrected and the affected services were rebuilt.
+
+### CORS Configuration
+
+After deployment, browser requests from the Azure Static Web Apps frontend required explicit CORS configuration on the FastAPI backend. The production and preview frontend origins were added, the API image was rebuilt, and the Container App was redeployed.
+
+### Final Validation
+
+After these fixes:
+
+- The production frontend loaded successfully.
+- Frontend API requests completed successfully.
+- API health returned `{"status":"ok"}`.
+- Redis connectivity from the running Container App returned `True`.
+- Concurrent same-seat validation produced 1 successful booking and 99 conflicts.
+
+---
+
 ## Known Limitations
 
 This project is designed as a production-oriented engineering project, but it is **not presented as a production-scale ticketing platform**.
@@ -740,7 +829,6 @@ Potential next-stage improvements include:
 * Distributed tracing
 * CI/CD with automated testing
 * Container image publishing
-* Cloud deployment
 * Horizontal API scaling
 * Database connection-pool tuning
 * Integration and end-to-end test suites
@@ -749,6 +837,10 @@ Potential next-stage improvements include:
 ---
 
 ## Project Status
+
+- Azure cloud deployment completed for portfolio validation
+- End-to-end frontend -> API -> PostgreSQL -> Redis flow validated
+- Concurrent seat-booking protection validated with 100 simultaneous requests: 1 success, 99 conflicts, 0 unexpected errors
 
 **Status:** Functional / portfolio-ready engineering project
 
@@ -764,6 +856,7 @@ Implemented areas include:
 * Administrative workflows
 * Concurrent booking tests
 * Docker-based development
+* Azure cloud deployment and validation
 
 ---
 

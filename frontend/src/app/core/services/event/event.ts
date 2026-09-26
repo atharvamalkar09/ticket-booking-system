@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -46,7 +47,7 @@ export interface EventUpdateRequest {
 })
 export class EventService {
   private readonly API_URL =
-    'http://localhost:8000/api/v1/events';
+    `${environment.apiUrl}/events`;
 
   private readonly http = inject(HttpClient);
 

@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -34,7 +35,7 @@ export class PaymentService {
   private readonly http = inject(HttpClient);
 
   private readonly API_URL =
-    'http://localhost:8000/api/v1/payments';
+    `${environment.apiUrl}/payments`;
 
   createOrder(
     bookingId: number

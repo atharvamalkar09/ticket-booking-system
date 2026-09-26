@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -32,7 +33,7 @@ export interface UserStatusUpdate {
 })
 export class UserService {
   private readonly API_URL =
-    'http://localhost:8000/api/v1/users';
+    `${environment.apiUrl}/users`;
 
   private readonly http = inject(HttpClient);
 

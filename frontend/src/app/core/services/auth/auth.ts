@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
@@ -32,7 +33,7 @@ interface TokenPayload {
   providedIn: 'root'
 })
 export class Auth {
-  private readonly API_URL = 'http://localhost:8000/api/v1/auth';
+  private readonly API_URL = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'access_token';
   private readonly http = inject(HttpClient);
 

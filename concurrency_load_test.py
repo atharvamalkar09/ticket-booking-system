@@ -8,11 +8,11 @@ import httpx
 # CONFIGURATION
 # ============================================================
 
-API_URL = "http://localhost:8000/api/v1/bookings"
+API_URL = "https://ticket-booking-api.kindbay-f9b35095.centralindia.azurecontainerapps.io/api/v1/bookings"
 
-TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4Iiwicm9sZSI6IlVTRVIiLCJleHAiOjE3ODkwNDI4NDR9.lgYFXKzdyBY_xNyvRgA7dT7W0og8572ysAgJlJzzWGw"
+TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1Iiwicm9sZSI6IlVTRVIiLCJleHAiOjE3OTA0MjA0NzJ9.9xxBh1OddlUFAtw5LbCQljSw1vKzgtk9td9WVa4bfTI"
 
-EVENT_ID = 1
+EVENT_ID = 2
 
 # 50 AVAILABLE database seat IDs for venue 2
 #
@@ -23,7 +23,7 @@ EVENT_ID = 1
 # F5=62
 #
 
-SEAT_IDS = [227] * 100
+SEAT_IDS = [105] * 100
 NUMBER_OF_REQUESTS = len(SEAT_IDS)
 
 TIMEOUT = 60.0
@@ -117,7 +117,7 @@ def percentile(values, percentile):
 async def main():
 
     print("\n========================================")
-    print("       REDIS LOAD TEST")
+    print("       AZURE REDIS LOAD TEST")
     print("========================================")
     print(f"Event ID       : {EVENT_ID}")
     print(f"Requests       : {NUMBER_OF_REQUESTS}")
@@ -212,9 +212,9 @@ async def main():
     for result in results:
 
         print(
-            f"Request {result['request']:03d} → "
-            f"Seat {result['seat_id']:02d} → "
-            f"{result['status_code']} → "
+            f"Request {result['request']:03d} â†’ "
+            f"Seat {result['seat_id']:02d} â†’ "
+            f"{result['status_code']} â†’ "
             f"{result['latency_ms']:.2f} ms"
         )
 
@@ -231,9 +231,9 @@ async def main():
             if result["status_code"] not in (201, 400, 409):
 
                 print(
-                    f"Request {result['request']:03d} → "
-                    f"Seat {result['seat_id']} → "
-                    f"{result['status_code']} → "
+                    f"Request {result['request']:03d} â†’ "
+                    f"Seat {result['seat_id']} â†’ "
+                    f"{result['status_code']} â†’ "
                     f"{result['body']}"
                 )
 
@@ -243,8 +243,8 @@ async def main():
 
     print("\n========== CORRECTNESS ==========\n")
 
-    expected_success = NUMBER_OF_REQUESTS
-    expected_conflicts = 0
+    expected_success = 1
+    expected_conflicts = NUMBER_OF_REQUESTS - 1
 
     print(f"Expected success   : {expected_success}")
     print(f"Expected conflicts : {expected_conflicts}")
@@ -253,10 +253,10 @@ async def main():
         success_count == expected_success
         and conflict_count == expected_conflicts
     ):
-        print("\n✓ CONCURRENCY CORRECTNESS PASSED")
+        print("\nâœ“ CONCURRENCY CORRECTNESS PASSED")
 
     else:
-        print("\n✗ CONCURRENCY CORRECTNESS FAILED")
+        print("\nâœ— CONCURRENCY CORRECTNESS FAILED")
 
 
 if __name__ == "__main__":

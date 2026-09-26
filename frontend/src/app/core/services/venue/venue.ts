@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -30,7 +31,7 @@ export interface VenueCreateRequest {
 })
 export class VenueService {
   private readonly API_URL =
-    'http://localhost:8000/api/v1/venues';
+    `${environment.apiUrl}/venues`;
 
   private readonly http = inject(HttpClient);
 

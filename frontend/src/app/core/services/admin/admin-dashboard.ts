@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -7,7 +8,7 @@ import { AdminDashboardResponse } from '../../../features/admin/admin-dashboard/
   providedIn: 'root'
 })
 export class AdminDashboardService {
-  private readonly API_URL = 'http://localhost:8000/api/v1/admin/dashboard';
+  private readonly API_URL = `${environment.apiUrl}/admin/dashboard`;
   private readonly http = inject(HttpClient);
 
   getDashboard(): Observable<AdminDashboardResponse> {

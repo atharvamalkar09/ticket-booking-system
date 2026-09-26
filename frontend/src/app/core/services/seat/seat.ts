@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -16,7 +17,7 @@ export interface SeatResponse {
 })
 export class SeatService {
 
-  private readonly API_URL = 'http://localhost:8000/api/v1/seats';
+  private readonly API_URL = `${environment.apiUrl}/seats`;
 
   private readonly http = inject(HttpClient);
 
