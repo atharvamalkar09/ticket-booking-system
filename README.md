@@ -732,6 +732,34 @@ The application was deployed to a temporary cloud validation environment to veri
 - Redis connectivity from inside the running Container App returned `True`.
 - Angular frontend successfully communicated with the deployed API.
 
+### Azure Infrastructure Screenshots
+
+#### Azure Database
+
+![Azure Database](docs/screenshots/01-AzureDatabase.png)
+
+#### Azure Container App
+
+![Azure Container App](docs/screenshots/02-Azure-ContainerApp.png)
+
+#### Azure PostgreSQL Flexible Server
+
+![Azure PostgreSQL Server](docs/screenshots/03-Azure-PostgresSql-Server.png)
+
+#### Azure Repositories
+
+![Azure Repositories](docs/screenshots/04-Azure-Repositories.png)
+
+#### Azure Container Registry
+
+![Azure Container Registry](docs/screenshots/05-Azure-Container-Registry.png)
+
+#### Upstash Redis
+
+![Upstash Redis](docs/screenshots/07-Upstash-Redis.png)
+
+
+
 ### Public Demo
 
 Frontend: https://mango-wave-02a8ef100.2.azurestaticapps.net
@@ -739,6 +767,36 @@ Frontend: https://mango-wave-02a8ef100.2.azurestaticapps.net
 API: https://ticket-booking-api.kindbay-f9b35095.centralindia.azurecontainerapps.io
 
 The cloud environment is intended for temporary portfolio demonstration and validation rather than production-scale operation.
+
+### Application Screenshots
+
+#### Home Page
+
+![Home Page](docs/screenshots/14-HomePage.png)
+
+#### Events Page
+
+![Events Page](docs/screenshots/08-EventsPage.png)
+
+#### Event Details
+
+![Event Details](docs/screenshots/09-EventDetailsPage.png)
+
+#### Seat Selection
+
+![Seat Selection](docs/screenshots/10-SeatSelectionPage.png)
+
+#### My Bookings
+
+![My Bookings](docs/screenshots/11-MyBookingsPage.png)
+
+#### Admin Dashboard
+
+![Admin Dashboard](docs/screenshots/12-AdminDashboard.png)
+
+#### Swagger API
+
+![Swagger API](docs/screenshots/13-SwaggerAPI.png)
 
 ---
 
