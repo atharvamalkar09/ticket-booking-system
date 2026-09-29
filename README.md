@@ -762,7 +762,7 @@ The application was deployed to a temporary cloud validation environment to veri
 
 ### Public Demo
 
-Frontend: https://mango-wave-02a8ef100.2.azurestaticapps.net
+Frontend: https://mango-wave-02a8ef100-preview.eastasia.2.azurestaticapps.net/
 
 API: https://ticket-booking-api.kindbay-f9b35095.centralindia.azurecontainerapps.io
 
