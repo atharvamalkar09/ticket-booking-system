@@ -63,6 +63,7 @@ origins = [
     "http://127.0.0.1:4200",
     "https://mango-wave-02a8ef100.2.azurestaticapps.net",
     "https://mango-wave-02a8ef100-preview.eastasia.2.azurestaticapps.net",
+    "https://ticket-booking-system-ruby.vercel.app",
 ]
 
 app.add_middleware(
