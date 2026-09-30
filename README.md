@@ -28,7 +28,23 @@ The system uses **Angular** for the client application, **FastAPI** for the REST
 * Automated backend tests
 * Dedicated concurrency/load-testing scripts
 * Swagger/OpenAPI documentation through FastAPI
-* Deployed and validated on Azure
+* Validated on Azure, then migrated to a low-cost persistent stack (Vercel + Render + Neon)
+
+---
+
+## Live Demo
+
+| Component | Platform | URL |
+|---|---|---|
+| Frontend | Vercel | https://ticket-booking-system-ruby.vercel.app/ |
+| Backend API | Render | https://ticket-booking-api-lhzz.onrender.com/ |
+| API Docs (Swagger) | Render | https://ticket-booking-api-lhzz.onrender.com/docs |
+| Database | Neon PostgreSQL | (private) |
+| Redis | Upstash | (private) |
+
+> **Note:** The backend runs on Render's free tier and may take 30-60 seconds to wake up after a period of inactivity. The first request can be slow. The database (Neon) may also take a moment to resume on the first query.
+
+The cloud environment is intended for portfolio demonstration rather than production-scale operation.
 
 ---
 
@@ -378,7 +394,7 @@ This prevents a booking in one venue from incorrectly affecting an identically l
 | Containerization    | Docker                   |
 | Testing             | Pytest                   |
 | Concurrency Testing | Python load-test scripts |
-| Cloud               | Azure                    |
+| Cloud / Hosting     | Vercel (frontend), Render (backend), Neon (PostgreSQL), Upstash (Redis); Azure used for earlier validation |
 
 ---
 
@@ -712,9 +728,87 @@ Administrative operations require appropriate authorization.
 
 ---
 
-## Azure Deployment
+## Deployment History
 
-The application was deployed to a temporary cloud validation environment to verify the system end-to-end outside the local Docker development environment.
+The project was deployed in two phases.
+
+### Phase 1: Azure validation (temporary)
+
+The system was first deployed on Azure to validate it end-to-end in a cloud environment, outside the local Docker development environment:
+
+* Azure Static Web Apps for the Angular frontend
+* Azure Container Apps for the FastAPI backend
+* Azure Database for PostgreSQL Flexible Server for transactional persistence
+* Upstash Redis for distributed seat locking
+* Azure Container Registry for Docker image storage
+
+This phase produced the concurrency results and troubleshooting evidence documented below. The Azure environment was intentionally decommissioned after validation to avoid ongoing cost.
+
+### Phase 2: Low-cost persistent hosting (current)
+
+| Layer | Azure (validation) | Current |
+|---|---|---|
+| Frontend | Azure Static Web Apps | Vercel |
+| Backend | Azure Container Apps | Render |
+| Database | Azure PostgreSQL Flexible Server | Neon PostgreSQL |
+| Redis | Upstash | Upstash |
+| Image registry | Azure Container Registry | Not required |
+
+The PostgreSQL data was backed up from Azure and restored into Neon, preserving the schema, data, and Alembic revision history.
+
+### Migration from Azure to Vercel / Render / Neon
+
+* Backed up the Azure PostgreSQL database before decommissioning
+* Restored the backup into Neon PostgreSQL
+* Verified the Alembic revision matches (`alembic current`)
+* Pointed the backend `DATABASE_URL` to Neon (with `sslmode=require`)
+* Added the Vercel domain to the backend CORS origins
+* Updated the frontend production API URL to the Render backend
+* Re-ran the same-seat concurrency test against the new backend
+
+### Environment variables for the current deployment
+
+**Render (backend)**
+
+```env
+DATABASE_URL=postgresql://<user>:<password>@<neon-host>/<db>?sslmode=require
+REDIS_URL=...
+SECRET_KEY=...
+RAZORPAY_KEY_ID=...
+RAZORPAY_KEY_SECRET=...
+CORS_ORIGINS=https://your-app.vercel.app
+```
+
+**Vercel (frontend)**
+
+The production API base URL is configured in the Angular production environment file and points to the Render backend URL.
+
+Never commit real values. Configure them through each platform's environment settings.
+
+### Concurrency validation on the current deployment
+
+<!--
+Fill this in after running concurrency_load_test.py against the Render backend.
+
+| Metric | Result |
+|---|---:|
+| Concurrent requests | 100 |
+| Successful bookings | ... |
+| Conflicts | ... |
+| Other errors | ... |
+| Total time | ... |
+| Throughput | ... |
+| Average latency | ... |
+| P95 latency | ... |
+-->
+
+Latency on free-tier hosting is expected to be higher than on the Azure deployment. The correctness property (one success, all others rejected as conflicts) is independent of the hosting platform.
+
+---
+
+## Azure Validation Evidence
+
+> The Azure environment described in this section has been decommissioned. The screenshots and results are preserved as historical validation evidence. The Azure URLs are no longer active.
 
 ### Azure Resources
 
@@ -732,7 +826,7 @@ The application was deployed to a temporary cloud validation environment to veri
 - Redis connectivity from inside the running Container App returned `True`.
 - Angular frontend successfully communicated with the deployed API.
 
-### Azure Infrastructure Screenshots
+### Azure Infrastructure Screenshots (decommissioned)
 
 #### Azure Database
 
@@ -757,16 +851,6 @@ The application was deployed to a temporary cloud validation environment to veri
 #### Upstash Redis
 
 ![Upstash Redis](docs/screenshots/07-Upstash-Redis.png)
-
-
-
-### Public Demo
-
-Frontend: https://mango-wave-02a8ef100-preview.eastasia.2.azurestaticapps.net/
-
-API: https://ticket-booking-api.kindbay-f9b35095.centralindia.azurecontainerapps.io
-
-The cloud environment is intended for temporary portfolio demonstration and validation rather than production-scale operation.
 
 ### Application Screenshots
 
@@ -798,9 +882,7 @@ The cloud environment is intended for temporary portfolio demonstration and vali
 
 ![Swagger API](docs/screenshots/13-SwaggerAPI.png)
 
----
-
-## Azure Concurrency Validation
+### Azure Concurrency Validation
 
 The deployed Azure API was tested with 100 concurrent booking requests targeting the same event and seat.
 
@@ -819,33 +901,31 @@ The deployed Azure API was tested with 100 concurrent booking requests targeting
 
 The result matched the expected concurrency behavior: one request successfully booked the seat while the remaining 99 requests were rejected as conflicts.
 
----
-
-## Deployment Troubleshooting and Failure Evidence
+### Deployment Troubleshooting and Failure Evidence
 
 The Azure deployment required several debugging steps before the final environment was validated.
 
-### PostgreSQL Firewall Timeout
+#### PostgreSQL Firewall Timeout
 
 The API initially could not connect to Azure PostgreSQL because the required client IP was not allowed by the PostgreSQL firewall. The firewall configuration was corrected and connectivity was revalidated.
 
-### Alembic Migration Issues
+#### Alembic Migration Issues
 
 The Azure database initially lacked the required bookings schema. Migration inconsistencies were encountered and repaired, including enum/index conflicts and a duplicate price column definition.
 
-### Container Apps to PostgreSQL Connectivity
+#### Container Apps to PostgreSQL Connectivity
 
 Initial connectivity attempts between Azure Container Apps and PostgreSQL resulted in connection timeouts. Azure networking, firewall rules, database configuration, and application connection settings were checked before connectivity was successfully established.
 
-### Frontend API Configuration
+#### Frontend API Configuration
 
 The Angular production configuration initially contained incorrectly quoted API URL template expressions in multiple services. These were corrected and the affected services were rebuilt.
 
-### CORS Configuration
+#### CORS Configuration
 
 After deployment, browser requests from the Azure Static Web Apps frontend required explicit CORS configuration on the FastAPI backend. The production and preview frontend origins were added, the API image was rebuilt, and the Container App was redeployed.
 
-### Final Validation
+#### Final Validation
 
 After these fixes:
 
@@ -869,6 +949,13 @@ Current limitations include:
 * No message broker/event streaming layer is currently required.
 * Horizontal scaling and multi-region deployment have not been implemented.
 * Automated CI/CD deployment pipelines are not currently included.
+
+### Free-tier hosting caveats
+
+* Render's free tier puts the backend to sleep after inactivity, so the first request can take 30-60 seconds.
+* Neon autosuspends idle compute, so the first database query after idle time may be slow.
+* Upstash free tier has usage limits.
+* Because the backend may be asleep, any in-process scheduled job would not run during that time. Booking expiry is therefore enforced through the `expires_at` timestamp and expiry filtering rather than depending on an always-running background worker.
 
 These limitations are intentional scope boundaries rather than claims of production readiness.
 
@@ -896,7 +983,8 @@ Potential next-stage improvements include:
 
 ## Project Status
 
-- Azure cloud deployment completed for portfolio validation
+- Deployed on Vercel (frontend), Render (backend), Neon (PostgreSQL) and Upstash (Redis)
+- Previously deployed and validated end-to-end on Azure, then migrated to a low-cost persistent stack with the database preserved from a backup
 - End-to-end frontend -> API -> PostgreSQL -> Redis flow validated
 - Concurrent seat-booking protection validated with 100 simultaneous requests: 1 success, 99 conflicts, 0 unexpected errors
 
@@ -915,6 +1003,7 @@ Implemented areas include:
 * Concurrent booking tests
 * Docker-based development
 * Azure cloud deployment and validation
+* Migration to Vercel / Render / Neon
 
 ---
 
