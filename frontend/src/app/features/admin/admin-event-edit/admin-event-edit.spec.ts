@@ -20,3 +20,4 @@ describe('AdminEventEdit', () => {
     expect(component).toBeTruthy();
   });
 });
+

@@ -20,3 +20,4 @@ describe('AdminBookings', () => {
     expect(component).toBeTruthy();
   });
 });
+

@@ -14,3 +14,4 @@ describe('Seat', () => {
     expect(service).toBeTruthy();
   });
 });
+

@@ -20,3 +20,4 @@ describe('Events', () => {
     expect(component).toBeTruthy();
   });
 });
+

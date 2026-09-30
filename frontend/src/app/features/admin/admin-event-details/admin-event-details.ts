@@ -107,3 +107,4 @@ export class AdminEventDetails implements OnInit {
     ]);
   }
 }
+

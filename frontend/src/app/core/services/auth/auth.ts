@@ -115,3 +115,4 @@ export class Auth {
     localStorage.removeItem(this.TOKEN_KEY);
   }
 }
+

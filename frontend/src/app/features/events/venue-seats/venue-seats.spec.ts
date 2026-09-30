@@ -20,3 +20,4 @@ describe('VenueSeats', () => {
     expect(component).toBeTruthy();
   });
 });
+

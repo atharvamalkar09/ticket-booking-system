@@ -194,3 +194,4 @@ export class Event implements OnInit {
     ]);
   }
 }
+

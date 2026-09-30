@@ -354,3 +354,4 @@ export class AdminEventEdit implements OnInit {
     ]);
   }
 }
+

@@ -20,3 +20,4 @@ describe('BookingState', () => {
     expect(component).toBeTruthy();
   });
 });
+

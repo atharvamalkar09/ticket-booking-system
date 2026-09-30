@@ -20,3 +20,4 @@ describe('AdminVenueDetails', () => {
     expect(component).toBeTruthy();
   });
 });
+

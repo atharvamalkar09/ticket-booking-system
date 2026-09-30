@@ -20,3 +20,4 @@ describe('Dialog', () => {
     expect(component).toBeTruthy();
   });
 });
+

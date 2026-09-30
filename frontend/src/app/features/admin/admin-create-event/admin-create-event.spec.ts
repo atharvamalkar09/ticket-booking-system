@@ -20,3 +20,4 @@ describe('AdminCreateEvent', () => {
     expect(component).toBeTruthy();
   });
 });
+

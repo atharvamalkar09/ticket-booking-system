@@ -20,3 +20,4 @@ describe('SeatSelection', () => {
     expect(component).toBeTruthy();
   });
 });
+
