@@ -71,3 +71,7 @@ redis_data/
 
 *.tmp
 *.temp
+# Database / project backups
+*.dump
+*.tar
+

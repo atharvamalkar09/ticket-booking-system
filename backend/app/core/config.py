@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     RAZORPAY_KEY_SECRET: str
     RAZORPAY_WEBHOOK_SECRET: str
 
-    REDIS_URL: str = "redis://ticket_booking_redis:6379/0"
+    REDIS_URL: str = "redis://localhost:6379/0"
 
     model_config = SettingsConfigDict(
         env_file=".env",
